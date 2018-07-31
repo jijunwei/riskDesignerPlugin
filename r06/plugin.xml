@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+    <!--<extension
+         point="org.eclipse.ui.editors">
+     <editor
+            name="RiskFlow XML Editor"
+            extensions="flow"
+            icon="icons/sample.gif"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="r06.editors.RiskFlowXmlEditor"
+            id="r06.editors.RiskFlowXmlEditor">
+      </editor>      
+      
+   </extension>-->
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="flow Multi-page Editor"
+            extensions="flow"
+            icon="icons/sample.gif"
+            contributorClass="r06.editors2.MultiPageEditorContributor"
+            class="r06.riskFlowEditors.MultiPageEditor"
+            id="r06.riskFlowEditors.MultiPageEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="cfg Editor"
+            extensions="cfg"
+            icon="icons/sample.gif"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="r06.cfgXmlEditors.CFGEditor"
+            id="r06.cfgXmlEditors.CfgEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="risk rule Editor"
+            extensions="drl"
+            icon="icons/drl.png"
+            contributorClass="r06.drlEditor.JavaActionContributor"
+            class="r06.drlEditor.JavaEditor"
+            id="r06.drlEditor.JavaEditor">
+      </editor>
+   </extension>  
+   
+
+   
+   <extension
+         id="drlEditorSetupParticipant"
+         name="drlEditorSetupParticipant"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            extensions="drl"
+            class="r06.drlEditor.JavaDocumentSetupParticipant">
+      </participant>
+   </extension>
+   
+<!-- =========================================================================== -->
+<!-- Template Editor Example                                                     -->
+<!-- =========================================================================== -->
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="drl.editor.name"
+            icon="icons/sample.gif"
+            extensions="xml"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="r06.drlTemplateEditor.editors.TemplateEditor"
+            id="r06.drlTemplateEditor.editors.TemplateEditor">
+      </editor>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="drl.editor.preferencePage.label"
+            class="r06.drlTemplateEditor.preferences.TemplatesPreferencePage"
+            id="r06.drlTemplateEditor.preferencepage">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.editors.templates">
+      <contextType
+            name="drl.contextType.name"
+            class="r06.drlTemplateEditor.template.XMLContextType"
+            id="r06.drlTemplateEditor.templateeditor.xml">
+      </contextType>
+      <template
+            name="ant.tasks.copy.name"
+            icon="icons/template.gif"
+            description="ant.tasks.copy.description"
+            contextTypeId="r06.drlTemplateEditor.templateeditor.xml"
+            id="r06.drlTemplateEditor.ant.copy">
+         <pattern>&lt;copy todir=&quot;${dst}&quot;&gt;&lt;fileset dir=&quot;${src}&quot;/&gt;&lt;/copy&gt;</pattern>
+      </template>
+      <resolver
+            name="ant.resolvers.src"
+            type="src"
+            icon="icons/resolver.gif"
+            description="ant.resolvers.src.description"
+            contextTypeId="r06.drlTemplateEditor.templateeditor.xml"
+            class="r06.drlTemplateEditor.template.AntVariableResolver">
+      </resolver>
+      <resolver
+            name="ant.resolvers.dst"
+            type="dst"
+            icon="icons/resolver.gif"
+            description="ant.resolvers.dst.description"
+            contextTypeId="r06.drlTemplateEditor.templateeditor.xml"
+            class="r06.drlTemplateEditor.template.AntVariableResolver">
+      </resolver>
+      <include
+      		file="templates/ant.xml"
+      		translations="$nl$/templates/ant.properties">
+      </include>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="properties Multi-page Editor"
+            extensions="properties"
+            icon="icons/sample.gif"
+            contributorClass="r06.riskFlowEditors.MultiPageEditorContributor"
+            class="r06.riskFlowEditors.MultiPageEditor"
+            id="r06.riskFlowEditors.MultiPageEditor">
+      </editor>
+   </extension>
+   
+   
+    <!--<extension-point id="splashExtension" name="Splash Extensions" schema="schema/splashExtension.exsd"/>-->
+
+   <extension
+         id="RiskDesignerBuilder"
+         name="RiskDesigner Solution Project Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="r06.builder.RiskDesignerBuilder">
+         </run>
+      </builder>
+   </extension>
+  
+   <extension
+         id="RiskDesignerNature"
+         name="RiskDesigner Project Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="r06.builder.RiskDesignerNature">
+         </run>
+      </runtime>
+      <builder
+            id="r06.RiskDesignerBuilder">
+      </builder>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="RiskDesigner Project Nature commands"
+            id="r06.RiskDesignerNature.category">
+      </category>
+      <command
+            name="Add/RemoveRiskDesigner Project Nature"
+            defaultHandler="r06.builder.AddRemoveRiskDesignerNatureHandler"
+            categoryId="r06.RiskDesignerNature.category"
+            id="r06.addRemoveRiskDesigner Nature">
+      </command>
+     
+      <category
+            name="Sample Category"
+            id="r06.commands.category">
+      </category>
+      <command
+            name="Sample Command"
+            categoryId="r06.commands.category"
+            id="r06.commands.sampleCommand">
+      </command>
+      
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
+         <command
+               commandId="r06.addRemoveRiskDesignerNature"
+               label="Disable RiskDesigner builder"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <adapt
+                           type="org.eclipse.core.resources.IProject">
+                        <test
+                              value="r06.RiskDesignerNature"
+                              property="org.eclipse.core.resources.projectNature">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="r06.addRemoveRiskDesignerNature"
+               label="Enable RiskDesigner builder"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <adapt
+                           type="org.eclipse.core.resources.IProject">
+                        <not>
+                           <test
+                                 value="r06.RiskDesignerNature"
+                                 property="org.eclipse.core.resources.projectNature">
+                           </test>
+                        </not>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               label="riskDesignerMenu"
+               mnemonic="M"
+               id="r06.menus.sampleMenu">
+            <command
+                  commandId="r06.commands.sampleCommand"
+                  mnemonic="S"
+                  id="r06.menus.sampleCommand">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="r06.toolbars.sampleToolbar">
+            <command
+                  commandId="r06.commands.sampleCommand"
+                  icon="icons/sln.png"
+                  tooltip="Say riskDesigner"
+                  id="r06.toolbars.sampleCommand">
+            </command>
+         </toolbar>
+      </menuContribution>
+      
+   </extension>
+   <extension
+         id="xmlProblem"
+         name="XML Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="riskDesignerNavigator"
+            icon="icons/releng_gears.gif"
+            class="org.eclipse.ui.navigator.CommonNavigator"
+            id="com.riskDesigner">
+      </view>
+      <category
+            name="PropertiesCategory"
+            id="r06">
+      </category>
+      <view
+            name="PlanPropertiesView"
+            icon="icons/releng_gears.gif"
+            category="r06"
+            class="r06.views.PlanPropertiesView"
+            id="r06.views.PlanPropertiesView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.navigator.viewer">
+      <viewerActionBinding
+            viewerId="com.riskDesigner">
+         <includes>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.*">
+            </actionExtension>
+         </includes>
+      </viewerActionBinding>
+      <viewerContentBinding
+            viewerId="com.riskDesigner">
+         <includes>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resourceContent">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resources.filters.*">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resources.linkHelper">
+            </contentExtension>
+            <contentExtension
+                  pattern="org.eclipse.ui.navigator.resources.workingSets">
+            </contentExtension>
+         </includes>
+      </viewerContentBinding>
+   </extension>
+   
+   
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            commandId="r06.commands.sampleCommand"
+            class="r06.handlers.RiskDesignerHandler">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="r06.commands.sampleCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+6"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+   </extension>
+   
+ <!-- ****************  NEW solution PROJECT WIZARD ******************* -->
+ 
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="RiskDesignerSolutionDevelop"
+            icon="icons/releng_gears.gif"
+            class="r06.perspectives.RiskDesignerPerspective"
+            id="r06.perspectives.RiskDesignerPerspective">
+      </perspective>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.navigator.ProjectExplorer"
+               relationship="stack"
+               id="com.riskDesigner">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="right"
+               id="r06.views.PlanPropertiesView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="new risk solution Wizards"
+            id="r06">
+      </category>
+       <!--<wizard
+		id="r06.ui.MyProjectCreationWizard"
+		name="New solution Project (xujin tech)"
+		class="r06.ui.MyProjectCreationWizard"
+		category="r06"
+		icon="icons/sln.png"
+		project="true"
+		finalPerspective="org.eclipse.jdt.ui.JavaPerspective">
+		<description>New solution Project (xujin tech)</description>
+    </wizard>-->
+    <wizard
+		id="r06.ui.MyProjectCreationWizard"
+		name="New solution Project (xujin tech)"
+		class="r06.ui.MyProjectCreationWizard"
+		category="r06"
+		icon="icons/sln.png"
+		project="true"
+		finalPerspective="r06.perspectives.RiskDesignerPerspective">
+		<description>New solution Project (xujin tech)</description>
+    </wizard>
+    <wizard
+		id="r06.addPlanWizards"
+		name="add a new plan"
+		class="r06.addPlanWizards.AddPlanWizard"
+		category="r06"
+		icon="icons/plan.png">
+		
+    </wizard>
+      <wizard
+            name="risk.flow Editor file"
+            icon="icons/bpmn.png"
+            category="r06"
+            class="r06.flowWizards.NewRiskFlowWizard"
+            id="r06.flowWizards.NewRiskFlowWizard">
+      </wizard>
+      <wizard
+            name="properties Editor file"
+            icon="icons/properties.png"
+            category="r06"
+            class="r06.propertiesWizards.NewPropertiesWizard"
+            id="r06.propertiesWizards.NewPropertiesWizard">
+      </wizard>
+      <wizard
+            name="cfg Editor file"
+            icon="icons/config.png"
+            category="r06"
+            class="r06.cfgWizards.NewCfgWizard"
+            id="r06.cfgWizards.NewCfgWizard">
+      </wizard>
+      <wizard
+            name="drl Editor file"
+            icon="icons/drl.png"
+            category="r06"
+            class="r06.drlWizards.NewDrlWizard"
+            id="r06.drlWizards.NewDrlWizard">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <category
+            name="Import RiskSolution"
+            id="r06.importWizards.RiskSolution">
+      </category>
+      <wizard
+            name="Import an exist solution"
+            icon="icons/sln.png"
+            category="r06.importWizards.RiskSolution"
+            class="r06.importWizards.ImportWizard"
+            id="r06.importWizards.ImportWizard">
+         <description>
+            Import a solution from the local file system into the workspace.
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.exportWizards">
+      <category
+            name="export RiskSolution"
+            id="r06.exportWizards.RiskSolution">
+      </category>
+      <wizard
+            name="Export present solution"
+            icon="icons/sln.png"
+            category="r06.exportWizards.RiskSolution"
+            class="r06.exportWizards.ExportWizard"
+            id="r06.exportWizards.ExportWizard">
+         <description>
+            Export present solution to local file system.
+         </description>
+      </wizard>
+   </extension>
+   <!--File:addRiskPlan-->
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            id="r06.contribution1">
+         <menu
+               label="addRisklan"
+               path="additions"
+               id="r06.menu1">
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
+         <action
+               label="addRiskPlan"
+               class="r06.popup.actions.AddPlanAction"
+               menubarPath="r06.menu1/group1"
+               enablesFor="1"
+               id="r06.newAction">
+         </action>
+      </objectContribution>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFolder"
+            id="r06.contribution1">
+         <menu
+               label="addRisklan"
+               path="additions"
+               id="r06.menu1">
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
+         <action
+               label="addRiskPlan"
+               class="r06.popup.actions.AddPlanAction"
+               menubarPath="r06.menu1/group1"
+               enablesFor="1"
+               id="r06.newAction">
+         </action>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            id="r06.contribution1">
+         <menu
+               label="addRisklan"
+               path="additions"
+               id="r06.menu1">
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
+         <action
+               label="addRiskPlan"
+               class="r06.popup.actions.AddPlanAction"
+               menubarPath="r06.menu1/group1"
+               enablesFor="1"
+               id="r06.newAction">
+         </action>
+      </objectContribution>
+   </extension>
+   
+   <!-- ****************  DECORATOR ******************* -->
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            adaptable="true"
+            label="TestLabelDecorator.label"
+            state="false"
+            class="r06.ui.JavaElementDecorator"
+            id="r06.ui.javaElementDecorator">
+            <enablement>
+                <objectClass name="org.eclipse.jdt.core.IJavaElement"/> 
+            </enablement>
+            <description>
+               Appends an asterisk (*) to all IJavaElements.
+            </description>
+      </decorator>
+      
+      <decorator
+		label="TestLightweightLabelDecorator.label"
+		lightweight="true"
+		location="BOTTOM_LEFT"		
+		state="true"
+		class="r06.ui.JavaElementLightweightDecorator"
+		id="r06.ui.javaElementLightweightDecorator">
+		<enablement>
+			<or>
+				<objectClass
+					name="org.eclipse.core.resources.IResource">
+				</objectClass>         
+				<objectClass
+					name="org.eclipse.jdt.core.IJavaElement">
+				</objectClass>
+			</or>                
+		</enablement>
+		<description>
+			Renders files with open FileBuffers bold.
+		</description>
+	  </decorator>	
+      
+   </extension>
+ 
+   <extension
+      point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+            class="r06.ui.MyClasspathContainerInitializer"
+            id="org.eclipse.jdt.CONTAINER">
+      </classpathContainerInitializer>
+   </extension>
+   
+   <extension
+         point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+            name="Container (solution)"
+            class="r06.ui.MyClasspathContainerPage"
+            id="org.eclipse.jdt.CONTAINER">
+      </classpathContainerPage>
+   </extension>
+ 
+  
+   <extension point="org.eclipse.jdt.ui.javaElementFilters">
+      <filter
+            targetId="org.eclipse.jdt.ui.PackageExplorer"
+            name="Hide Java projects with other natures (solution)"
+            enabled="false"
+            description="Hide Java projects with other natures (solution)"
+            class="r06.ui.filters.PureProjectFilter"
+            id="r06.ui.PackageExplorer.PureProjectFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.jdt.ui.PackageExplorer"
+            name="Hide A.java (solution)"
+            enabled="false"
+            description="Hide A.java (solution)"
+            class="r06.ui.filters.AFileFilter"
+            id="r06.ui.PackageExplorer.AFileFilter">
+      </filter>
+    </extension> 
+	<extension point="org.eclipse.ui.navigator.navigatorContent">      
+       <commonFilter
+		        activeByDefault="false"
+		        class="r06.ui.filters.AFileFilter"
+		        name="Hide A.java (solution)"
+		        description="Hide A.java (solution)"
+		        id="r06.ui.filters.AFileFilter"/>
+	</extension>
+
+
+</plugin>
