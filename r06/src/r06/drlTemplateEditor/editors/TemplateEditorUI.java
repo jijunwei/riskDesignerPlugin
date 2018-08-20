@@ -26,7 +26,7 @@ import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.service.prefs.BackingStoreException;
 
-import r06.drlEditor.JavaEditorExamplePlugin;
+import r06.Activator;
 import r06.drlTemplateEditor.template.XMLContextType;
 
 /**
@@ -65,11 +65,11 @@ public class TemplateEditorUI  {
 	 */
 	public TemplateStore getTemplateStore() {
 		if (fStore == null) {
-			fStore= new ContributionTemplateStore(getContextTypeRegistry(), JavaEditorExamplePlugin.getDefault().getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
+			fStore= new ContributionTemplateStore(getContextTypeRegistry(), Activator.getDefault().getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
 			try {
 				fStore.load();
 			} catch (IOException e) {
-				JavaEditorExamplePlugin.getDefault().getLog().log(new Status(IStatus.ERROR, "org.eclipse.ui.examples.javaeditor", IStatus.OK, "", e)); //$NON-NLS-1$ //$NON-NLS-2$
+				Activator.getDefault().getLog().log(new Status(IStatus.ERROR, "org.eclipse.ui.examples.javaeditor", IStatus.OK, "", e)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return fStore;
@@ -91,7 +91,7 @@ public class TemplateEditorUI  {
 
 	/* Forward plug-in methods to javaeditor example plugin default instance */
 	public ImageRegistry getImageRegistry() {
-		return JavaEditorExamplePlugin.getDefault().getImageRegistry();
+		return Activator.getDefault().getImageRegistry();
 	}
 
 	public static ImageDescriptor imageDescriptorFromPlugin(String string, String default_image) {
@@ -99,14 +99,14 @@ public class TemplateEditorUI  {
 	}
 
 	public IPreferenceStore getPreferenceStore() {
-		return JavaEditorExamplePlugin.getDefault().getPreferenceStore();
+		return Activator.getDefault().getPreferenceStore();
 	}
 
 	public void savePluginPreferences() {
 		try {
-			InstanceScope.INSTANCE.getNode(JavaEditorExamplePlugin.PLUGIN_ID).flush();
+			InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID).flush();
 		} catch (BackingStoreException e) {
-			JavaEditorExamplePlugin.log(e);
+			Activator.log(e);
 		}
 	}
 

@@ -29,6 +29,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.graphics.RGB;
 
+import r06.Activator;
 import r06.drlEditor.java.JavaAutoIndentStrategy;
 import r06.drlEditor.java.JavaCompletionProcessor;
 import r06.drlEditor.java.JavaDoubleClickSelector;
@@ -76,7 +77,7 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
-		return JavaEditorExamplePlugin.JAVA_PARTITIONING;
+		return Activator.JAVA_PARTITIONING;
 	}
 
 	/* (non-Javadoc)
@@ -100,7 +101,7 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 		assistant.setAutoActivationDelay(500);
 		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-		assistant.setContextInformationPopupBackground(JavaEditorExamplePlugin.getDefault().getJavaColorProvider().getColor(new RGB(150, 150, 0)));
+		assistant.setContextInformationPopupBackground(Activator.getDefault().getJavaColorProvider().getColor(new RGB(150, 150, 0)));
 
 		return assistant;
 	}
@@ -124,15 +125,15 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 
-		JavaColorProvider provider= JavaEditorExamplePlugin.getDefault().getJavaColorProvider();
+		JavaColorProvider provider= Activator.getDefault().getJavaColorProvider();
 		PresentationReconciler reconciler= new PresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 
-		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(JavaEditorExamplePlugin.getDefault().getJavaCodeScanner());
+		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(Activator.getDefault().getJavaCodeScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
-		dr= new DefaultDamagerRepairer(JavaEditorExamplePlugin.getDefault().getJavaDocScanner());
+		dr= new DefaultDamagerRepairer(Activator.getDefault().getJavaDocScanner());
 		reconciler.setDamager(dr, JavaPartitionScanner.JAVA_DOC);
 		reconciler.setRepairer(dr, JavaPartitionScanner.JAVA_DOC);
 

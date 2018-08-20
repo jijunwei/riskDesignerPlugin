@@ -1,122 +1,112 @@
-/*     */ package r06.ui;
+package r06.ui;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-/*     */ 
-/*     */ import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-/*     */ import org.eclipse.core.resources.IProject;
-/*     */ import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-/*     */ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-/*     */ import org.eclipse.core.runtime.CoreException;
-/*     */ import org.eclipse.core.runtime.IConfigurationElement;
-/*     */ import org.eclipse.core.runtime.IExecutableExtension;
-/*     */ import org.eclipse.core.runtime.IPath;
-/*     */ import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-/*     */ import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-/*     */ import org.eclipse.core.runtime.SubProgressMonitor;
-/*     */ import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
-/*     */ import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-/*     */ import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
-/*     */ import org.eclipse.jdt.launching.JavaRuntime;
-/*     */ import org.eclipse.jdt.ui.wizards.JavaCapabilityConfigurationPage;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.ui.wizards.JavaCapabilityConfigurationPage;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.text.Document;
-/*     */ import org.eclipse.jface.viewers.IStructuredSelection;
-/*     */ import org.eclipse.jface.wizard.IWizardContainer;
-/*     */ import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.text.edits.TextEdit;
-/*     */ import org.eclipse.ui.INewWizard;
-/*     */ import org.eclipse.ui.IWorkbench;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-/*     */ import org.eclipse.ui.actions.WorkspaceModifyOperation;
-/*     */ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.ide.IDE;
-/*     */ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
-/*     */ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
-/*     */ 
-/*     */ public class MyProjectCreationWizard extends Wizard
-/*     */   implements IExecutableExtension, INewWizard
-/*     */ {
-/*     */   private WizardNewProjectCreationPage fMainPage;
-/*     */   private JavaCapabilityConfigurationPage fJavaPage;
-/*     */   private IConfigurationElement fConfigElement;
-/*     */   private IWorkbench fWorkbench;
-/*     */ 
-/*     */   public MyProjectCreationWizard()
-/*     */   {
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+
+public class MyProjectCreationWizard extends Wizard
+  implements IExecutableExtension, INewWizard
+{
+  private WizardNewProjectCreationPage fMainPage;
+  private JavaCapabilityConfigurationPage fJavaPage;
+  private IConfigurationElement fConfigElement;
+  private IWorkbench fWorkbench;
+  public String projectName;  //"one"
+  public String projectPath;//"C:\Users\jjw8610\runtime-EclipseApplication\one"
+
+  public MyProjectCreationWizard()
+  {
 /*  73 */     setWindowTitle("New Solution Project");
-/*     */   }
-/*     */ 
-/*     */   public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data)
-/*     */   {
+  }
+
+  public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data)
+  {
 /*  81 */     this.fConfigElement = cfig;
-/*     */   }
-/*     */ 
-/*     */   public void init(IWorkbench workbench, IStructuredSelection selection)
-/*     */   {
+  }
+
+  public void init(IWorkbench workbench, IStructuredSelection selection)
+  {
 /*  88 */     this.fWorkbench = workbench;
-/*     */   }
-/*     */ 
-/*     */   public void addPages()
-/*     */   {
-/*  95 */     super.addPages();
-/*  96 */     this.fMainPage = new WizardNewProjectCreationPage("NewProjectCreationWizard");
-/*  97 */     this.fMainPage.setTitle("New");
-/*  98 */     this.fMainPage.setDescription("Create a new Solution project.");
-/*     */ 
-/* 101 */     addPage(this.fMainPage);
-/*     */ 
-/* 104 */     this.fJavaPage = new JavaCapabilityConfigurationPage()
-/*     */     {
-/*     */       public void setVisible(boolean visible) {
-/* 107 */         try {
+  }
+
+  public void addPages()
+  {
+     super.addPages();
+     this.fMainPage = new WizardNewProjectCreationPage("NewProjectCreationWizard");
+    this.fMainPage.setTitle("New");
+     this.fMainPage.setDescription("Create a new Solution project.");
+
+    addPage(this.fMainPage);
+
+     this.fJavaPage = new JavaCapabilityConfigurationPage()
+    {
+      public void setVisible(boolean visible) {
+         try {
 						MyProjectCreationWizard.this.updatePage();
 					} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-/* 108 */         super.setVisible(visible);
-/*     */       }
-/*     */     };
-/* 111 */     addPage(this.fJavaPage);
-/*     */   }
-/*     */ 
-/*     */   private void updatePage() throws CoreException
-/*     */   {
-/* 117 */     IJavaProject jproject = JavaCore.create(this.fMainPage.getProjectHandle());
-/* 118 */     if (!jproject.equals(this.fJavaPage.getJavaProject())) {
-/* 119 */       IClasspathEntry[] buildPath = { 
-/* 120 */         
-                  JavaCore.newSourceEntry(jproject.getPath().append("java\\src")),
+         super.setVisible(visible);
+      }
+    };
+     addPage(this.fJavaPage);
+  }
+
+  private void updatePage() throws CoreException
+  {  IProject project =this.fMainPage.getProjectHandle();
+     IJavaProject jproject = JavaCore.create(project);
+     if (!jproject.equals(this.fJavaPage.getJavaProject())) {
+       IClasspathEntry[] buildPath = { 
+        
+                  //JavaCore.newSourceEntry(jproject.getPath().append("java\\src")),
+                  JavaCore.newSourceEntry(jproject.getPath().append("java\\src\\maven")),
+                  JavaCore.newSourceEntry(jproject.getPath().append("java\\src\\ant")),
+                  //JavaCore.newLibraryEntry(jproject.getPath().append("java\\lib"),null,null,false),
                   JavaCore.newSourceEntry(jproject.getPath().append("java\\lib")),
-                  
                   JavaCore.newSourceEntry(jproject.getPath().append("resources\\dev")),
                   JavaCore.newSourceEntry(jproject.getPath().append("resources\\test")),
                   JavaCore.newSourceEntry(jproject.getPath().append("resources\\pre-product")),
@@ -126,60 +116,72 @@ import org.eclipse.ui.ide.IDE;
                  ),
                   
                  
-/* 121 */         JavaRuntime.getDefaultJREContainerEntry() };
-/*     */ 
+/* 121 */    JavaRuntime.getDefaultJREContainerEntry() };
+
 /* 123 */    IPath outputLocation = jproject.getPath().append("target");
 
              this.fJavaPage.init(jproject, outputLocation, buildPath, false);
+             
+             projectPath=jproject.getPath().toString();
+             System.err.println("jproject.getPath() in updatePage():"+projectPath);
+             String projectName1=projectPath;
+             this.projectName=projectName1.substring(1,projectName1.length() );
             
-             System.err.println("jproject.getPath()"+jproject.getPath());
-             String projectName1=jproject.getPath().toString();
-             String projectName=projectName1.substring(1,projectName1.length() );
-             IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(jproject.getElementName());
-             System.err.println("jproject.getElementName():"+jproject.getElementName());
-             System.err.println("project:"+project.getName());
-/*    */     try
-/*    */     {
-/* 57 */       IProjectDescription description = project.getDescription();
-/* 58 */       description.setNatureIds(new String[] { "org.eclipse.jdt.core.javanature" });
-/* 59 */       project.setDescription(description, null);
+             //IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(jproject.getElementName());
+             //project.create(null);
+             //project.open(null);0
+             
+           /* IProjectDescription description = project.getDescription();
+			description.setNatureIds(new String[] { "org.eclipse.jdt.core.javanature" });
+			project.setDescription(description, null);*/
+			
+			/*IClasspathEntry[] cpentry = { 
+					         JavaCore.newSourceEntry(jproject.getPath()), 
+					         JavaRuntime.getDefaultJREContainerEntry() };
+			jproject.setRawClasspath(cpentry, jproject.getPath(), null);*/
+			/*Map options = new HashMap();
+			options.put("org.eclipse.jdt.core.formatter.tabulation.char", "space");
+			options.put("org.eclipse.jdt.core.formatter.tabulation.size", "4");
+			jproject.setOptions(options);*/
+			
+             System.err.println("jproject.getElementName()in updatePage()::"+jproject.getElementName());
+             System.err.println("project name in updatePage()::"+project.getName());
+     try
+     {
+              IPackageFragmentRoot root = jproject.getPackageFragmentRoot(project);
 
 
-/*    */ 
-/* 75 */       IPackageFragmentRoot root = jproject.getPackageFragmentRoot(project);
-
-
-/* 76 */       IPackageFragment packInit = root.createPackageFragment("test1", false, null);
-/* 77 */       StringBuffer buf = new StringBuffer();
-/* 78 */       buf.append("package test1;\n");
-/* 79 */       buf.append("public class E {\n");
-/* 80 */       buf.append("    public void foo(int i) {\n");
-/* 81 */       buf.append("        while (--i > 0) {\n");
-/* 82 */       buf.append("            System.beep();\n");
-/* 83 */       buf.append("        }\n");
-/* 84 */       buf.append("    }\n");
-/* 85 */       buf.append("}\n");
-/* 86 */       packInit.createCompilationUnit("E.java", buf.toString(), false, null);
+		       /*IPackageFragment packInit = root.createPackageFragment("test1", false, null);
+		       StringBuffer buf = new StringBuffer();
+		       buf.append("package test1;\n");
+		       buf.append("public class E {\n");
+		       buf.append("    public void foo(int i) {\n");
+		       buf.append("        while (--i > 0) {\n");
+		       buf.append("            System.beep();\n");
+		       buf.append("        }\n");
+		       buf.append("    }\n");
+		       buf.append("}\n");
+		       packInit.createCompilationUnit("E.java", buf.toString(), false, null);
 
 				
+			
 				IPackageFragment pck = root.getPackageFragment("net.chenxs");//得到指定包
 				if(!pck.exists()){
 					root.createPackageFragment("net.chenxs",false,null);//包不存在则创建
 				  }
-				  
 				StringBuffer buf00 = new StringBuffer();
-/* 78 */       buf00.append("package net.chenxs;\n");
-/* 79 */       buf00.append("public class E2 {\n");
-/* 80 */       buf00.append("    public void foo(int i) {\n");
-/* 81 */       buf00.append("        while (--i > 0) {\n");
-/* 82 */       buf00.append("            System.beep();\n");
-/* 83 */       buf00.append("        }\n");
-/* 84 */       buf00.append("    }\n");
-/* 85 */       buf00.append("}\n");
+		       buf00.append("package net.chenxs;\n");
+		       buf00.append("public class E2 {\n");
+		       buf00.append("    public void foo(int i) {\n");
+		       buf00.append("        while (--i > 0) {\n");
+		       buf00.append("            System.beep();\n");
+		       buf00.append("        }\n");
+		       buf00.append("    }\n");
+		       buf00.append("}\n");
 			  ICompilationUnit cu = pck.createCompilationUnit("E2.java", buf.toString(), true, new NullProgressMonitor());//创建获得编译单元 文件(java文件)
 
 
-			  ICompilationUnit  unit  = pck.getCompilationUnit("E2.java");//获得编译单元 
+			     ICompilationUnit  unit  = pck.getCompilationUnit("E2.java");//获得编译单元 
 			  	//对unit做N多操作
 
 				ICompilationUnit copy = cu.getWorkingCopy(null);//获取工作副本
@@ -192,7 +194,7 @@ import org.eclipse.ui.ide.IDE;
 				
 				IPackageFragmentRoot pkroot = jproject.getPackageFragmentRoot(jproject.getResource());
 				IPackageFragment pkg = pkroot.createPackageFragment("com.cownew", false, null);
-				pkg.createCompilationUnit("Hello.java", "package com.cownew;", false, null);
+				pkg.createCompilationUnit("Hello.java", "package com.cownew;", false, null);*/
                 
 				/**
 				 * 修改编译单元
@@ -200,392 +202,150 @@ import org.eclipse.ui.ide.IDE;
 					一旦拥有IType实例，就可以使用诸如createField、createInitializer、createMethod、createType等方法将成员添加
 					至类型。在这些方法中提供了源代码以及关于成员的位置的信息。
 				 */
-				 
-				
-               ASTParser parser = ASTParser.newParser(8);
-/* 90 */       parser.setSource(cu);
-/* 91 */       parser.setResolveBindings(false);
-/* 92 */       CompilationUnit astRoot = (CompilationUnit)parser.createAST(null);
-/* 93 */       AST ast = astRoot.getAST();
-/*    */ 
-/* 96 */       ASTRewrite rewrite = ASTRewrite.create(ast);
-/*    */ 
-/* 99 */       TypeDeclaration typeDecl = (TypeDeclaration)astRoot.types().get(0);
-/* 100 */       MethodDeclaration methodDecl = typeDecl.getMethods()[0];
-/* 101 */       Block block = methodDecl.getBody();
-/*    */ 
-/* 104 */       MethodInvocation newInv1 = ast.newMethodInvocation();
-/* 105 */       newInv1.setName(ast.newSimpleName("bar1"));
-/* 106 */       Statement newStatement1 = ast.newExpressionStatement(newInv1);
-/*    */ 
-/* 108 */       MethodInvocation newInv2 = ast.newMethodInvocation();
-/* 109 */       newInv2.setName(ast.newSimpleName("bar2"));
-/* 110 */       Statement newStatement2 = ast.newExpressionStatement(newInv2);
-/*    */ 
-/* 114 */       ListRewrite listRewrite = rewrite.getListRewrite(block, Block.STATEMENTS_PROPERTY);
-/* 115 */       listRewrite.insertFirst(newStatement1, null);
-/* 116 */       listRewrite.insertLast(newStatement2, null);
-/*    */ 
-/* 119 */       TextEdit res = rewrite.rewriteAST();
-/*    */ 
-/* 122 */       Document document = new Document(cu.getSource());
-/* 123 */       res.apply(document);
-/* 124 */       cu.getBuffer().setContents(document.get());
-/*    */ 
-/* 127 */       String preview = cu.getSource();
-/*    */ 
-/* 129 */       buf = new StringBuffer();
-/* 130 */       buf.append("package test1;\n");
-/* 131 */       buf.append("public class E {\n");
-/* 132 */       buf.append("    public void foo(int i) {\n");
-/* 133 */       buf.append("        bar1();\n");
-/* 134 */       buf.append("        while (--i > 0) {\n");
-/* 135 */       buf.append("            System.beep();\n");
-/* 136 */       buf.append("        }\n");
-/* 137 */       buf.append("        bar2();\n");
-/* 138 */       buf.append("    }\n");
-/* 139 */       buf.append("}\n");
-/* 140 */      System.err.println(preview.equals(buf.toString()));
-
-				
-				
+				 					
 
 
 
-				IPackageFragment pack0 = root.getPackageFragment("resources.META-INF");//得到指定包
+				 /*IPackageFragment pack0 = root.getPackageFragment("resources.META-INF");//得到指定包
 				if(!pack0.exists()){
 					root.createPackageFragment("resources.META-INF",false,null);//包不存在则创建
 				  }
-/* 77 */       StringBuffer buf0 = new StringBuffer();
-/* 78 */       buf0.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-/* 79 */       buf0.append("<kmodule xmlns=\"http://jboss.org/kie/6.0.0/kmodule\">\n");
-/* 80 */       buf0.append("    <kbase name=\"process\" packages=\"plan1.rules\">\n");
-/* 81 */       buf0.append("        <ksession name=\"ksession-process\"/>\n");
-/* 82 */       buf0.append("    </kmodule>\n");
-/* 83 */       
-/* 84 */       
-/* 86 */       //pack0.createCompilationUnit("kmodule.xml", buf0.toString(), false, null);
-               pack0.createCompilationUnit("kmodule.java", buf0.toString(), false, null);
-
-				IPackageFragment pack01 = root.getPackageFragment("resources");//得到指定包
-				if(!pack01.exists()){
-					root.createPackageFragment("resources",false,null);//包不存在则创建
-				  }
-/* 77 */       StringBuffer buf01 = new StringBuffer();
-/* 78 */       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-/* 79 */       buf01.append("<Solution isActive=\"true\" name=\""+projectName+"\">\n");
-			   buf01.append("<Plan id=\"1\" name=\"plan1\" isActive=\"true\">\n");
-/* 80 */       
-			   buf01.append("    <Models>\n");
-			   buf01.append("    <!-- 添加<model>:<Model type=\"out\" id=\"*\"/> -->\n");
-			   buf01.append("    <!-- 添加<model>:<Model type=\"in\" id=\"*\"/> -->\n");
-/* 81 */       buf01.append("    </Models>\n");
-/* 82 */       buf01.append("    </Plan>\n");
-/* 83 */       buf01.append("</Solution>\n");
-/* 84 */       
-/* 86 */       pack01.createCompilationUnit("default.cfg", buf01.toString(), false, null);
-
-				IPackageFragment pack1 = root.getPackageFragment("maven");//得到指定包
-				if(!pack1.exists()){
-					root.createPackageFragment("maven",false,null);//包不存在则创建
-				  }
-/* 77 */       StringBuffer buf1 = new StringBuffer();
-/* 78 */       buf1.append("<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">;\n");
-/* 79 */       buf1.append("<modelVersion>4.0.0</modelVersion>\n");
-/* 80 */       buf1.append("<groupId>xujin</groupId>{\n");
-/* 81 */       buf1.append("<artifactId>"+projectName+"</artifactId>\n");
-/* 82 */       buf1.append("<version>0.0.1-SNAPSHOT</version>\n");
-/* 83 */       buf1.append("<name>xujin risk project</name>\n");
-/* 84 */       buf1.append("<description>a starter framework of xujin risk project</description>\n");
-/* 85 */       buf1.append("<properties>\n");
-               buf1.append("<drools.version>6.2.0.Final</drools.version>\n<jbpm.version>6.2.0.Final</jbpm.version>\n<httpclient.version>3.1</httpclient.version>\n<commons-lang.version>2.6</commons-lang.version>\n"
-               		+ "<fastjson.version>1.2.3</fastjson.version>\n"
-               		+ "<logback.version>1.1.3</logback.version>\n"
-               		+ "<lombok.version>1.16.16</lombok.version>"
-               		+ "<slf4j.version>1.7.12</slf4j.version>");
-		       buf1.append("</properties>\n\n");
-				
-				buf1.append("<repositories>\n");
-				buf1.append("<repository>\n<id>nexus-aliyun</id>\n<name>Nexus aliyun</name>\n<url>http://maven.aliyun.com/nexus/content/groups/public</url>\n</repository>\n");
-				buf1.append("<repository>\n<id>mvnrepository</id>\n<name>mvnrepository</name>\n<url>http://www.mvnrepository.com/</url>\n</repository>\n");
-				buf1.append("</repositories>\n\n");
-				
-				buf1.append("<dependencies>\n");
-				buf1.append("<dependency>\n<groupId>org.drools</groupId>\n<artifactId>knowledge-api</artifactId>\n<version>${drools.version}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>org.drools</groupId>\n<artifactId>drools-core</artifactId>\n<version>${drools.version}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>org.drools</groupId>\n<artifactId>drools-compiler</artifactId>\n<version>${drools.version}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>org.jbpm</groupId>\n<artifactId>jbpm-flow</artifactId>\n<version>${jbpm.version}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>org.jbpm</groupId>\n<artifactId>jbpm-flow-builder</artifactId>\n<version>${jbpm.version}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>org.jbpm</groupId>\n<artifactId>jbpm-bpmn2</artifactId>\n<version>${jbpm.version}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>commons-httpclient</groupId>\n<artifactId>commons-httpclient</artifactId>\n<version>$<httpclient.version}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>commons-lang</groupId>\n<artifactId>commons-lang</artifactId>\n<version>${commons-lang.version}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>com.alibaba</groupId>\n<artifactId>fastjson</artifactId>\n<version>${fastjson.version}</version>\n</dependency>\n");
-				
-				buf1.append("<dependency>\n<groupId>ch.qos.logback</groupId>\n<artifactId>logback-core</artifactId>\n<version>${logback.version}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>ch.qos.logback</groupId>\n<artifactId>logback-classic</artifactId>\n<version>${logback.version}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>org.projectlombok</groupId>\n<artifactId>lombok</artifactId>\n<version>${lombok.version}</version>\n</dependency>\n");
-				
-				buf1.append("<dependency>\n<groupId>org.slf4j</groupId>\n<artifactId>slf4j-api</artifactId>\n<version>${slf4j.version}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>org.slf4j</groupId>\n<artifactId>log4j-over-slf4j</artifactId>\n<version>${slf4j.version}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>org.slf4j</groupId>\n<artifactId>jcl-over-slf4j</artifactId>\n<version>${slf4j.version}</version>\n</dependency>\n");
-				/*buf1.append("<dependency>\n<groupId>ch.qos.logback</groupId>\n<artifactId>logback-core</artifactId>\n<version>${<logback.version>}</version>\n</dependency>\n");
-				buf1.append("<dependency>\n<groupId>ch.qos.logback</groupId>\n<artifactId>logback-core</artifactId>\n<version>${<logback.version>}</version>\n</dependency>\n");
-				*/
-				buf1.append("</dependencies>\n\n");
-				
-				
-				buf1.append("<build>\n");
-				buf1.append("<plugins>\n");
-				buf1.append("<!-- maven编译插件 -->\n");
-				buf1.append("<plugin>  \n");
-				buf1.append("   <groupId>org.apache.maven.plugins</groupId>\n");  
-				buf1.append("   <artifactId>maven-compiler-plugin</artifactId>\n");  
-				buf1.append("   <version>2.3.2</version>  \n");
-				buf1.append("   <configuration>    \n");
-				buf1.append("   	<source>1.8</source>  \n");
-				buf1.append("   	<target>1.8</target> \n"); 
-				buf1.append("   	<encoding>UTF-8</encoding>\n");
-				buf1.append("   	<compilerArguments>  \n");
-				buf1.append("          <verbose />  \n");
-				buf1.append("          <bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>  \n");
-				buf1.append("        </compilerArguments>\n");
-				buf1.append("   	</configuration>  \n");
-				buf1.append("   </plugin>\n\n");
-				buf1.append("<plugin>\n");
-				buf1.append("   <groupId>org.codehaus.mojo</groupId>\n");
-				buf1.append("   <artifactId>build-helper-maven-plugin</artifactId>\n");
-				buf1.append("   <version>1.7</version>\n");
-				buf1.append("   <executions>\n");
-				buf1.append("      <execution>\n");
-				buf1.append("         <id>add-source</id>\n");
-				buf1.append("         <phase>generate-sources</phase>\n");
-				buf1.append("         <goals><goal>add-source</goal></goals>\n");
-				buf1.append("         <configuration>\n");
-				buf1.append("            <sources>\n");
-				buf1.append("               <source>java/src</source>\n");
-		        buf1.append("            </sources>\n");
-				buf1.append("         </configuration>\n");
-				buf1.append("      </execution>\n");
-				buf1.append("   </executions>\n");
-				buf1.append("</plugin> ");
-				buf1.append("<plugin>");
-				buf1.append("   <groupId>org.apache.maven.plugins</groupId>");
-				buf1.append("   <artifactId>maven-shade-plugin</artifactId>");
-				buf1.append("   <version>2.4.1</version>");
-				buf1.append("   <executions>");
-				buf1.append("      <execution>");
-				buf1.append("         <phase>package</phase>");
-				buf1.append("      <goals>");
-				buf1.append("         <goal>shade</goal>");
-				buf1.append("      </goals>");
-				buf1.append("   <configuration>");
-				buf1.append("      <transformers>");
-				buf1.append("         <transformer implementation=\"org.apache.maven.plugins.shade.resource.ManifestResourceTransformer\">");
-				buf1.append("         </transformer>");
-				buf1.append("      </transformers>");
-				buf1.append("   </configuration>");
-				buf1.append("      </execution>");
-				buf1.append("   </executions>");
-				buf1.append("</plugin>");
-			    buf1.append("</plugins>\n");
-								
-                buf1.append("<resources>\n");
-				buf1.append("<resource>\n<directory>plan1/</directory>\n<includes>\n<include>**/*.flow</include>\n</includes>\n<targetPath>drls</targetPath>\n<filtering>false</filtering>\n</resource>\n");
-				buf1.append("<!-- 将规则文件文件打包进jar包 -->\n<resource>\n<directory>plan1/rules</directory>\n<targetPath>drls</targetPath>\n<filtering>false</filtering>\n</resource>\n");
-				buf1.append("<!-- 将kmodule.xml文件打包进jar包 -->\n<resource>\n<directory>resources/META-INF</directory>\n<targetPath>META-INF</targetPath>\n<filtering>false</filtering>\n</resource>\n");
-				buf1.append("<resource>\n<directory>resources/</directory>\n<includes>\n<include>**/*.cfg</include>\n</includes>\n<filtering>false</filtering>\n</resource>\n");
-				buf1.append("<!-- 将application.properties文件打包进jar包的properties文件夹 -->\n<resource>\n<directory>resources/${package.environment}</directory>\n<includes>\n<include>**/*</include>\n</includes>\n<filtering>false</filtering>\n</resource>\n");
-				
-				buf1.append("</resources>\n");
-				
-				buf1.append("</build>\n");
-				
-				buf1.append("<profiles>\n");
-				buf1.append("<profile>\n<id>test</id>\n<activation>\n<activeByDefault>true</activeByDefault>\n</activation>\n"
-						+ "<properties>\n<package.environment>test</package.environment>\n</properties>\n</profile>\n");
-				
-				buf1.append("<profile>\n<id>dev</id>\n"
-						+ "<properties>\n<package.environment>dev</package.environment>\n</properties>\n</profile>\n");
-				
-				buf1.append("<profile>\n<id>pre-product</id>\n"
-						+ "<properties>\n<package.environment>pre-product</package.environment>\n</properties>\n</profile>\n");
-				
-				buf1.append("<profile>\n<id>product</id>\n"
-						+ "<properties>\n<package.environment>product</package.environment>\n</properties>\n</profile>\n");
-				
-				buf1.append("	</profiles>\n");
-				buf1.append("</project>\n");
-				
-/* 86 */       pack1.createCompilationUnit("pom.xml", buf1.toString(), false, null);
-				IPackageFragment pack2 = root.getPackageFragment("ant");//得到指定包
-				if(!pack2.exists()){
-					root.createPackageFragment("ant",false,null);//包不存在则创建
-				  }
-/* 77 */       StringBuffer buf2 = new StringBuffer();
-/* 78 */       buf2.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-/* 79 */       buf2.append("<project name=\""+projectName+"\" default=\"run\" basedir=\".\">\n");
-/* 80 */       buf2.append("    <property name=\"dest\" value=\"d:\riskfiles\"/>\n");
-/* 81 */       buf2.append("    <property name=\"project.build.directory\" value=\""+jproject.getPath()+"target\"/>\n");
-/* 82 */       buf2.append("    <property name=\"project.build.finalName\" value=\""+projectName+"-0.0.1-SNAPSHOT.jar\"/>\n");
-/* 83 */       buf2.append("    <property name=\"solution_jar\" value=\"${dest}\\data\\${project.build.finalName}\"/>\n");
-/* 84 */       buf2.append("<target name=\"init\">\n");
-				buf2.append("<mkdir dir=\"${dest}\"/> \n");  
-				buf2.append("<mkdir dir=\"${dest}\\data\"/>\n");
-		        buf2.append("<mkdir dir=\"${dest}\\solution\"/>\n");
-				buf2.append("<mkdir dir=\"${dest}\\solution\\"+projectName+".sln\"/>\n");
-				buf2.append("</target>\n");
-/* 85 */       buf2.append("<target name=\"deploy\">\n");
-				buf2.append("<copy file=\"${project.build.directory}\\${project.build.finalName}\"\n");   
-				buf2.append("todir=\"${dest}\\data\" overwrite=\"true\"/>\n");
-				buf2.append("<copy todir=\"${dest}\\solution\\test.sln\\AllPass.plan\">\n");
-				buf2.append("<fileset dir=\"${project.build.directory}\\classes\\drls\"/>\n");
-				buf2.append("</copy>\n");
-				buf2.append("<copy file=\"${project.build.directory}\\classes\\default.cfg\"\n");   
-				buf2.append("todir=\"${dest}\\solution\\"+projectName+".sln\" overwrite=\"true\"/>\n");
-				buf2.append("</target>\n");
-				buf2.append("<target name=\"run\" depends=\"init,deploy\">\n");
-				buf2.append("<echo message=\"ok:deploy compeleted\"/> \n");
-				buf2.append("</target>\n");
-				buf2.append("<target name=\"clean\">\n");
-				buf2.append("<delete dir=\"${dest}\" />\n");
-				buf2.append("<delete file=\"${solution_jar}\" />\n");
-				buf2.append("</target>\n");
-				buf2.append("<target name=\"rerun\" depends=\"clean,run\">\n");
-				buf2.append("<ant target=\"clean\" />\n");
-				buf2.append("<ant target=\"run\" />\n");
-				buf2.append("</target>\n");
-/* 86 */        pack2.createCompilationUnit("build.xml", buf2.toString(), false, null);
-               
-				IPackageFragment pack3 = root.getPackageFragment("plan1");//得到指定包
-				if(!pack3.exists()){
-					root.createPackageFragment("plan1",false,null);//包不存在则创建
-				  }
-/* 76 */       
-/* 77 */       StringBuffer buf3 = new StringBuffer();
-/* 78 */       buf3.append("package test1;\n");
-/* 79 */       buf3.append("public class E {\n");
-/* 80 */       buf3.append("    public void foo(int i) {\n");
-/* 81 */       buf3.append("        while (--i > 0) {\n");
-/* 82 */       buf3.append("            System.beep();\n");
-/* 83 */       buf3.append("        }\n");
-/* 84 */       buf3.append("    }\n");
-/* 85 */       buf3.append("}\n");
-/* 86 */       pack3.createCompilationUnit("risk.flow", buf3.toString(), false, null);
-
-				IPackageFragment pack4 = root.getPackageFragment("plan1.rules");//得到指定包
-				if(!pack4.exists()){
-					root.createPackageFragment("plan1.rules",false,null);//包不存在则创建
-				  }
-/* 76 */       
-/* 77 */       StringBuffer buf4 = new StringBuffer();
-/* 78 */	   buf4.append("/**section package  ;**/ {\n");       
-				buf4.append("package com.xujin.demo;\n");
-/* 79 */       buf4.append("/**section import  ;**/ \n\n");
-
-/* 80 */       buf4.append("rule \""+"one"+"\"\n");
-/* 81 */       buf4.append("        salience 1\n");
-/* 82 */       buf4.append("        no-loop\n");
-/* 83 */       buf4.append("        lock-on-active true\n");
-/* 84 */       buf4.append("        ruleflow-group \" "+"."+"\"\n\n");
-/* 85 */       buf4.append("        when\n\n");
-			   buf4.append("        then\n\n");
-			   buf4.append("        end\n\n");
-/* 86 */       pack4.createCompilationUnit("one.drl", buf4.toString(), false, null);
-
-/* 76 */
-				IPackageFragment pack41 = root.getPackageFragment("plan1.rules.a.b");//得到指定包
-				if(!pack41.exists()){
-					root.createPackageFragment("plan1.rules.a.b",false,null);//包不存在则创建
-				  }       
-/* 77 */       StringBuffer buf41 = new StringBuffer();
-/* 78 */	   buf41.append("/**section package  ;**/ {\n");       
-				buf41.append("package com.xujin.demo;\n");
-/* 79 */       buf41.append("/**section import  ;**/ \n\n");
-
-/* 80 */       buf41.append("rule \""+"a.b"+".two"+"\"\n");
-/* 81 */       buf41.append("        salience 1\n");
-/* 82 */       buf41.append("        no-loop\n");
-/* 83 */       buf41.append("        lock-on-active true\n");
-/* 84 */       buf41.append("        ruleflow-group \" "+"a.b"+"\"\n");
-/* 85 */       buf41.append("        when\n\n");
-			   buf41.append("        then\n\n");
-			   buf41.append("        end\n\n");
-/* 86 */       pack41.createCompilationUnit("two.drl", buf41.toString(), false, null);
-/* 140 */      
-
-
-/*    */     }catch(Exception e){
+		       StringBuffer buf0 = new StringBuffer();
+		       buf0.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		       buf0.append("<kmodule xmlns=\"http://jboss.org/kie/6.0.0/kmodule\">\n");
+		       buf0.append("    <kbase name=\"process\" packages=\"plan1.rules\">\n");
+		       buf0.append("        <ksession name=\"ksession-process\"/>\n");
+		       buf0.append("    </kmodule>\n");
+       
+       
+               pack0.createCompilationUnit("kmodule.xml", buf0.toString(), false, null);*/
+     
+     		}catch(Exception e){
 	            e.printStackTrace();
              }
 
-/* 124 */       
-/*     */     }
-/*     */   }
+      
+    }
+  }
 
-/*     */ 
-/*     */   private void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
-/* 129 */     if (monitor == null)
-/* 130 */       monitor = new NullProgressMonitor();
-/*     */     try
-/*     */     {
-/* 133 */       monitor.beginTask("Creating risk solution project...", 3);
-/*     */ 
-/* 135 */       IProject project = this.fMainPage.getProjectHandle();
-/* 136 */       IPath locationPath = this.fMainPage.getLocationPath();
-/*     */ 
-/* 139 */       IProjectDescription desc = project.getWorkspace().newProjectDescription(project.getName());
-/* 140 */       if (!this.fMainPage.useDefaults()) {
-/* 141 */         desc.setLocation(locationPath);
-/*     */       }
-/* 143 */       project.create(desc, new SubProgressMonitor(monitor, 1));
-/* 144 */       project.open(new SubProgressMonitor(monitor, 1));
-/*     */ 
-/* 146 */       updatePage();
-/* 147 */       this.fJavaPage.configureJavaProject(new SubProgressMonitor(monitor, 1));
-/*     */ 
-/* 151 */       BasicNewProjectResourceWizard.updatePerspective(this.fConfigElement);
-/* 152 */       BasicNewResourceWizard.selectAndReveal(project, this.fWorkbench.getActiveWorkbenchWindow());
-/*     */     }
-/*     */     finally {
-/* 155 */       monitor.done();
-/*     */     }
-/*     */   }
-/*     */ 
-/*     */   public boolean performFinish()
-/*     */   {
-/* 163 */     WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-/*     */       protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
-/* 165 */       
-				IProject project = fMainPage.getProjectHandle();
-	            IPath locationPath = fMainPage.getLocationPath();
-	            final String containerName = locationPath.toString()+project.toString();
-	            System.err.println(containerName);
-					final String fileName = "plan1\\risk.flow";
-					IRunnableWithProgress op = new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException {
-							try {
-								doFinish(containerName, fileName, monitor);
-							} catch (CoreException e) {
-								throw new InvocationTargetException(e);
-							} finally {
-								monitor.done();
-							}
-						}
-					};
 
-	              MyProjectCreationWizard.this.finishPage(monitor);
-/*     */       } } ;
-/*     */     try {
-/* 169 */       getContainer().run(false, true, op);
-/*     */     } catch (InvocationTargetException localInvocationTargetException) {
-/* 171 */       return false;
-/*     */     } catch (InterruptedException localInterruptedException) {
-/* 173 */       return false;
-/*     */     }
-/* 175 */     return true;
-/*     */   }
+  private void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
+     if (monitor == null)
+       monitor = new NullProgressMonitor();
+    try
+    {
+       monitor.beginTask("Creating risk solution project...", 3);
 
-private void doFinish(
+       IProject project = this.fMainPage.getProjectHandle();
+       IPath locationPath = this.fMainPage.getLocationPath();
+       this.projectName=project.getName();
+       final String containerName1 = "/"+projectName;
+       
+       System.err.println("locationPath.toString() in finishPage:"+locationPath.toString());
+       System.err.println("containerName1 in finishPage:"+containerName1);
+       
+       IProjectDescription desc = project.getWorkspace().newProjectDescription(project.getName());
+       if (!this.fMainPage.useDefaults()) {
+          desc.setLocation(locationPath);
+       }
+        project.create(desc, new SubProgressMonitor(monitor, 1));
+        project.open(new SubProgressMonitor(monitor, 1));
+        updatePage();
+        this.fJavaPage.configureJavaProject(new SubProgressMonitor(monitor, 1));
+
+        BasicNewProjectResourceWizard.updatePerspective(this.fConfigElement);
+        BasicNewResourceWizard.selectAndReveal(project, this.fWorkbench.getActiveWorkbenchWindow());
+        
+        final String containerName0 = "/"+projectName+"/java/src/maven";
+        final String fileName0 = "TestMavenCommand.java";
+        
+        final String containerName00 = "/"+projectName+"/java/src/ant";
+        final String fileName00 = "TestDeployCommand.java";
+        
+        
+        final String containerName = "/"+projectName+"/resources/META-INF";
+        final String fileName = "kmodule.xml";
+        
+        final String fileName2 = "build.xml";
+        final String fileName4 = "pom.xml";
+        
+       
+                
+        final String container7="/"+projectName+"/plan1/rules";
+        final String fileName7 = "one.drl";
+        //final String container5="/"+projectName+"/plan1/rules/a/b";
+        //final String fileName5 = "two.drl";
+        final String container3="/"+projectName+"/plan1";
+        final String fileName3 = "risk.flow";
+        
+        final String container6="/"+projectName+"/resources/dev";
+        final String fileName6 = "config.properties";
+        final String fileName9 = "log4j.properties";
+        final String fileName10 = "logback.xml";
+        
+        
+        
+        final String container8="/"+projectName+"/resources";
+        final String fileName8 = "default.cfg";
+ 		
+ 	   try{
+ 		doFinish(containerName0, fileName0, monitor);
+ 		doFinish(containerName00, fileName00, monitor);
+		doFinish(containerName, fileName, monitor);
+		
+		doFinish(containerName1, fileName2, monitor);
+		doFinish(containerName1, fileName4, monitor);
+		
+		doFinish(container3, fileName3, monitor);
+		
+		//doFinish(container5, fileName5, monitor);
+		doFinish(container6, fileName6, monitor);
+		doFinish(container6, fileName9, monitor);
+		doFinish(container6, fileName10, monitor);
+		
+		doFinish(container7, fileName7, monitor);
+		doFinish(container8, fileName8, monitor);
+			
+
+        BasicNewProjectResourceWizard.updatePerspective(this.fConfigElement);
+        BasicNewResourceWizard.selectAndReveal(project, this.fWorkbench.getActiveWorkbenchWindow());
+ 	   }catch(Exception e){
+ 		   e.printStackTrace();
+ 		   System.err.println("after doFinish():"+e.getMessage());
+ 	   }
+ 		
+        
+        
+        
+     }
+     finally {
+        monitor.done();
+        }
+  }
+
+  public boolean performFinish()
+  {
+    WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+      protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
+       
+    	  
+    	  MyProjectCreationWizard.this.finishPage(monitor);
+		   
+	}
+    };
+    try {
+    	 getContainer().run(false, true, op);
+    } catch (InvocationTargetException localInvocationTargetException) {
+    	 return false;
+    } catch (InterruptedException localInterruptedException) {
+    	 return false;
+    }
+    	return true;
+    }
+
+
+  		
+		private void doFinish(
 		String containerName,
 		String fileName,
 		IProgressMonitor monitor)
@@ -594,13 +354,15 @@ private void doFinish(
 		monitor.beginTask("Creating " + fileName, 2);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource resource = root.findMember(new Path(containerName));
+		System.err.println("in doFinish() containerName:"+containerName);
 		if (!resource.exists() || !(resource instanceof IContainer)) {
 			throwCoreException("Container \"" + containerName + "\" does not exist.");
 		}
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fileName));
 		try {
-			InputStream stream = openContentStream();
+			
+			InputStream stream = openContentStream(fileName);
 			if (file.exists()) {
 				file.setContents(stream, true, true, monitor);
 			} else {
@@ -628,14 +390,383 @@ private void doFinish(
 				new Status(IStatus.ERROR, "r06", IStatus.OK, message, null);
 			throw new CoreException(status);
 		}
-		private InputStream openContentStream() {
-			String contents =
-				"This is the initial file contents for *.flow file that should be word-sorted in the Preview page of the multi-page editor";
+		private InputStream openContentStream(String fileName) {
+			String contents="";
+			if(fileName.equals("TestMavenCommand.java")){
+				StringBuffer buf0=new StringBuffer();
+				   buf0.append("import java.io.File;\nimport java.io.InputStream;\nimport java.io.InputStreamReader;\nimport java.util.Properties;\nimport java.util.logging.Logger;\n");
+			       buf0.append("public class TestMavenCommand {\n");
+			       buf0.append("     final static Logger log =  Logger.getLogger(\"maven.TestMavenCommand\");\n");
+			       buf0.append("     public static void main(String[] args) {\n");
+			       buf0.append("     	Properties props=System.getProperties(); //系统属性\n");
+			       buf0.append("     	System.out.println(\"用户的当前工作目录：\"+props.getProperty(\"user.dir\"));\n");
+			       buf0.append("     	String file = props.getProperty(\"user.dir\");\n");
+			       buf0.append("        try {\n");
+			       buf0.append("              Process process=null;//成功！直接执行\n");
+			       buf0.append("              String os = props.getProperty(\"os.name\");\n");
+			       buf0.append("              if (os != null && os.toLowerCase().indexOf(\"linux\") > -1) {\n");
+			       buf0.append("                    process= Runtime.getRuntime().exec(\"sh mvn install\",null,new File(file));\n");
+			       buf0.append("              } else {\n");
+			       buf0.append("                    process= Runtime.getRuntime().exec(\"cmd /c mvn install\",null,new File(file));\n");
+			       buf0.append("                    InputStream inputStream = process.getInputStream();\n			InputStreamReader isr = new InputStreamReader(inputStream);\n			InputStream errorStream = process.getErrorStream();\n			InputStreamReader esr = new InputStreamReader(errorStream);\n");
+			       buf0.append("                    int n1;\n 			char[] c1 = new char[1024];\n			StringBuffer standardOutput = new StringBuffer();\n			while ((n1 = isr.read(c1)) > 0) {\n  			standardOutput.append(c1, 0, n1);}\n");
+			       buf0.append("                    System.out.println(\"Standard Output: \" + standardOutput.toString());\n");
+			       buf0.append("                    int n2;\n			char[] c2 = new char[1024];\n			StringBuffer standardError = new StringBuffer();\n			while ((n2 = esr.read(c2)) > 0) {\n  			standardError.append(c2, 0, n2);}\n");
+			       buf0.append("                    System.out.println(\"Standard Error: \" + standardError.toString());\n");
+			       buf0.append("              		}\n					} catch (Exception e) {\n	            e.printStackTrace();\n        }\n");
+			       buf0.append("          }\n");
+			       buf0.append("    }\n");
+			       contents=buf0.toString();
+				
+			}
+			if(fileName.equals("TestDeployCommand.java")){
+				StringBuffer buf0=new StringBuffer();
+				   buf0.append("import java.io.File;\nimport java.io.InputStream;\nimport java.io.InputStreamReader;\nimport java.util.Properties;\nimport java.util.logging.Logger;\n");
+			       buf0.append("public class TestDeployCommand {\n");
+			       buf0.append("     final static Logger log =  Logger.getLogger(\"ant.TestDeployCommand\");\n");
+			       buf0.append("     public static void main(String[] args) {\n");
+			       buf0.append("     Properties props=System.getProperties(); //系统属性\n");
+			       buf0.append("     System.out.println(\"用户的当前工作目录：\"+props.getProperty(\"user.dir\"));\n");
+			       buf0.append("     String file = props.getProperty(\"user.dir\");\n");
+			       buf0.append("     try {\n");
+			       buf0.append("          Process process=null;//成功！直接执行\n");
+			       buf0.append("          String os = props.getProperty(\"os.name\");\n");
+			       buf0.append("          if (os != null && os.toLowerCase().indexOf(\"linux\") > -1) {\n");
+			       buf0.append("              process= Runtime.getRuntime().exec(\"sh ant\",null,new File(file));\n");
+			       buf0.append("           } else {\n");
+			       buf0.append("              process= Runtime.getRuntime().exec(\"cmd /c ant\",null,new File(file));\n");
+			       buf0.append("              InputStream inputStream = process.getInputStream();\n				InputStreamReader isr = new InputStreamReader(inputStream);\n			InputStream errorStream = process.getErrorStream();\n			InputStreamReader esr = new InputStreamReader(errorStream);\n");
+			       buf0.append("              int n1;\n			char[] c1 = new char[1024];\n			StringBuffer standardOutput = new StringBuffer();\n			while ((n1 = isr.read(c1)) > 0) {\n  			standardOutput.append(c1, 0, n1);}\n");
+			       buf0.append("              System.out.println(\"Standard Output: \" + standardOutput.toString());\n");
+			       buf0.append("              int n2;\n			char[] c2 = new char[1024];\n				StringBuffer standardError = new StringBuffer();\n			while ((n2 = esr.read(c2)) > 0) {\n  			standardError.append(c2, 0, n2);}\n");
+			       buf0.append("              	System.out.println(\"Standard Error: \" + standardError.toString());\n");
+			       buf0.append("           			}\n				} catch (Exception e) {\n	            e.printStackTrace();\n        }\n");
+			       buf0.append("      }\n");
+			       buf0.append("   }\n");
+			       contents=buf0.toString();
+				
+			}
+			
+			if(fileName.equals("one.drl")){
+				StringBuffer buf4 = new StringBuffer();
+				   buf4.append("/**section package  ;**/ {\n");       
+					buf4.append("package com.xujin.demo;\n");
+					buf4.append("/**section import  ;**/ \n\n");
+
+			       buf4.append("rule \""+"rules.one"+"\"\n");
+			       buf4.append("        salience 1\n");
+			       buf4.append("        no-loop\n");
+			       buf4.append("        lock-on-active true\n");
+			       buf4.append("        ruleflow-group \""+"rules"+"\"\n\n");
+			       buf4.append("        when\n\n");
+				   buf4.append("        then\n\n");
+				   buf4.append("        end\n\n");
+				   contents=buf4.toString();
+			}
+			if(fileName.equals("two.drl")){
+			   StringBuffer buf41 = new StringBuffer();
+			   buf41.append("/**section package  ;**/ {\n");       
+			   buf41.append("package com.xujin.demo;\n");
+		       buf41.append("/**section import  ;**/ \n\n");
+		
+		       buf41.append("rule \""+"a.b"+".two"+"\"\n");
+		       buf41.append("        salience 1\n");
+		       buf41.append("        no-loop\n");
+		       buf41.append("        lock-on-active true\n");
+		       buf41.append("        ruleflow-group \" "+"a.b"+"\"\n");
+		       buf41.append("        when\n\n");
+			   buf41.append("        then\n\n");
+			   buf41.append("        end\n\n");
+			   contents=buf41.toString();
+			}
+			if(fileName.equals("build.xml")){
+				StringBuffer buf2 = new StringBuffer();
+			       buf2.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+			       buf2.append("<project name=\""+projectName+"\" default=\"run\" basedir=\".\">\n");
+			       buf2.append("    <property name=\"dest\" value=\"d:\\riskfiles\"/>\n");
+			       buf2.append("    <property name=\"project.build.directory\" value=\""+"target\"/>\n");
+			       buf2.append("    <property name=\"project.build.finalName\" value=\""+projectName+"-0.0.1-SNAPSHOT.jar\"/>\n");
+			       buf2.append("    <property name=\"solution_jar\" value=\"${dest}\\data\\${project.build.finalName}\"/>\n");
+			       buf2.append("<target name=\"init\">\n");
+					buf2.append("	<mkdir dir=\"${dest}\"/> \n");  
+					buf2.append("	<mkdir dir=\"${dest}\\data\"/>\n");
+			        buf2.append("	<mkdir dir=\"${dest}\\solution\"/>\n");
+					buf2.append("	<mkdir dir=\"${dest}\\solution\\"+projectName+".sln\"/>\n");
+					buf2.append("</target>\n");
+					buf2.append("<target name=\"deploy\">\n");
+					buf2.append("	<copy file=\"${project.build.directory}\\${project.build.finalName}\"\n");   
+					buf2.append("		todir=\"${dest}\\data\" overwrite=\"true\"/>\n");
+					buf2.append("	<copy todir=\"${dest}\\solution\\"+projectName+".sln\\AllPass.plan\">\n");
+					buf2.append("		<fileset dir=\"${project.build.directory}\\classes\\drls\"/>\n");
+					buf2.append("	</copy>\n");
+					buf2.append("	<copy file=\"${project.build.directory}\\classes\\default.cfg\"\n");   
+					buf2.append("		todir=\"${dest}\\solution\\"+projectName+".sln\" overwrite=\"true\"/>\n");
+					buf2.append("</target>\n");
+					buf2.append("<target name=\"run\" depends=\"init,deploy\">\n");
+					buf2.append("	<echo message=\"ok:deploy compeleted\"/> \n");
+					buf2.append("</target>\n");
+					buf2.append("<target name=\"clean\">\n");
+					buf2.append("	<delete dir=\"${dest}\" />\n");
+					buf2.append("	<delete file=\"${solution_jar}\" />\n");
+					buf2.append("</target>\n");
+					buf2.append("<target name=\"rerun\" depends=\"clean,run\">\n");
+					buf2.append("	<ant target=\"clean\" />\n");
+					buf2.append("	<ant target=\"run\" />\n");
+					buf2.append("</target>\n");
+					buf2.append("</project>");
+					contents=buf2.toString();
+			}
+			if(fileName.equals("default.cfg")){
+				 StringBuffer buf01 = new StringBuffer();
+			       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			       buf01.append("<Solution isActive=\"true\" name=\""+projectName+"\">\n");
+				   buf01.append("<Plan id=\"1\" name=\"plan1\" isActive=\"true\">\n");
+	       
+				   buf01.append("    <Models>\n");
+				   buf01.append("    <!-- 添加<model>:<Model type=\"out\" id=\"*\"/> -->\n");
+				   buf01.append("    <!-- 添加<model>:<Model type=\"in\" id=\"*\"/> -->\n");
+			       buf01.append("    </Models>\n");
+			       buf01.append("    </Plan>\n");
+			       buf01.append("</Solution>\n");
+			       contents=buf01.toString();
+				}
+			if(fileName.equals("kmodule.xml")){
+				
+				   StringBuffer buf01 = new StringBuffer();
+			       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			       buf01.append("<Solution isActive=\"true\" name=\""+projectName+"\">\n");
+				   buf01.append("<Plan id=\"1\" name=\"plan1\" isActive=\"true\">\n");
+	       
+				   buf01.append("    <Models>\n");
+				   buf01.append("    <!-- 添加<model>:<Model type=\"out\" id=\"*\"/> -->\n");
+				   buf01.append("    <!-- 添加<model>:<Model type=\"in\" id=\"*\"/> -->\n");
+			       buf01.append("    </Models>\n");
+			       buf01.append("    </Plan>\n");
+			       buf01.append("</Solution>\n");
+			       contents=buf01.toString();
+			}
+			if(fileName.equals("risk.flow")){
+				   
+				   String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+				   System.out.println(uuid);
+				   StringBuffer buf01 = new StringBuffer();
+			       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			       buf01.append("<definitions id=\"Definition\"\n");
+				   buf01.append("    targetNamespace=\"http://www.jboss.org/drools\"\n");
+	       
+				   buf01.append("    typeLanguage=\"http://www.java.com/javaTypes\"\n");
+				   buf01.append("    expressionLanguage=\"http://www.mvel.org/2.0\"\n");
+				   buf01.append("    xmlns=\"http://www.omg.org/spec/BPMN/20100524/MODEL\"\n");
+			       buf01.append("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+			       buf01.append("    xsi:schemaLocation=\"http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd\"\n");
+			       buf01.append("    xmlns:g=\"http://www.jboss.org/drools/flow/gpd\"\n");
+			       buf01.append("    xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\"\n");
+			       buf01.append("    xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\"\n");
+			       buf01.append("    xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\"\n");
+			       buf01.append("    xmlns:tns=\"http://www.jboss.org/drools\">\n");
+			       
+			       buf01.append("    <process processType=\"Private\" isExecutable=\"true\" id=\""+uuid+"\" name=\""+uuid+"\" >\n");
+			       buf01.append("	 </process>\n");
+			       buf01.append("<bpmndi:BPMNDiagram>\n");
+			       buf01.append("	<bpmndi:BPMNPlane bpmnElement=\""+uuid+"\" >\n");
+			       buf01.append("    </bpmndi:BPMNPlane>\n");
+			       buf01.append("</bpmndi:BPMNDiagram>\n");
+			       buf01.append("</definitions>\n");
+			       contents=buf01.toString();
+			}
+			
+			if(fileName.equals("pom.xml")){
+				StringBuffer buf1 = new StringBuffer();
+			       buf1.append("<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n");
+			       buf1.append("<modelVersion>4.0.0</modelVersion>\n");
+			       buf1.append("<groupId>xujin</groupId>\n");
+			       buf1.append("<artifactId>"+projectName+"</artifactId>\n");
+			       buf1.append("<version>0.0.1-SNAPSHOT</version>\n");
+			       buf1.append("<name>xujin risk project</name>\n");
+			       buf1.append("<description>a starter framework of xujin risk project</description>\n");
+			       buf1.append("<properties>\n");
+	               buf1.append("<drools.version>6.2.0.Final</drools.version>\n<jbpm.version>6.2.0.Final</jbpm.version>\n<httpclient.version>3.1</httpclient.version>\n<commons-lang.version>2.6</commons-lang.version>\n"
+	               		+ "<fastjson.version>1.2.3</fastjson.version>\n"
+	               		+ "<logback.version>1.1.3</logback.version>\n"
+	               		+ "<lombok.version>1.16.16</lombok.version>"
+	               		+ "<slf4j.version>1.7.12</slf4j.version>");
+			       buf1.append("</properties>\n\n");
+					
+					buf1.append("<repositories>\n");
+					buf1.append("<repository>\n<id>nexus-aliyun</id>\n<name>Nexus aliyun</name>\n<url>http://maven.aliyun.com/nexus/content/groups/public</url>\n</repository>\n");
+					buf1.append("<repository>\n<id>mvnrepository</id>\n<name>mvnrepository</name>\n<url>http://www.mvnrepository.com/</url>\n</repository>\n");
+					buf1.append("</repositories>\n\n");
+					
+					buf1.append("<dependencies>\n");
+					buf1.append("<dependency>\n<groupId>org.drools</groupId>\n<artifactId>knowledge-api</artifactId>\n<version>${drools.version}</version>\n</dependency>\n");
+					buf1.append("<dependency>\n<groupId>org.drools</groupId>\n<artifactId>drools-core</artifactId>\n<version>${drools.version}</version>\n</dependency>\n");
+					buf1.append("<dependency>\n<groupId>org.drools</groupId>\n<artifactId>drools-compiler</artifactId>\n<version>${drools.version}</version>\n</dependency>\n");
+					buf1.append("<dependency>\n<groupId>org.jbpm</groupId>\n<artifactId>jbpm-flow</artifactId>\n<version>${jbpm.version}</version>\n</dependency>\n");
+					buf1.append("<dependency>\n<groupId>org.jbpm</groupId>\n<artifactId>jbpm-flow-builder</artifactId>\n<version>${jbpm.version}</version>\n</dependency>\n");
+					buf1.append("<dependency>\n<groupId>org.jbpm</groupId>\n<artifactId>jbpm-bpmn2</artifactId>\n<version>${jbpm.version}</version>\n</dependency>\n");
+					buf1.append("<dependency>\n<groupId>commons-httpclient</groupId>\n<artifactId>commons-httpclient</artifactId>\n<version>${httpclient.version}</version>\n</dependency>\n");
+					buf1.append("<dependency>\n<groupId>commons-lang</groupId>\n<artifactId>commons-lang</artifactId>\n<version>${commons-lang.version}</version>\n</dependency>\n");
+					buf1.append("<dependency>\n<groupId>com.alibaba</groupId>\n<artifactId>fastjson</artifactId>\n<version>${fastjson.version}</version>\n</dependency>\n");
+					
+					buf1.append("<dependency>\n<groupId>ch.qos.logback</groupId>\n<artifactId>logback-core</artifactId>\n<version>${logback.version}</version>\n</dependency>\n");
+					buf1.append("<dependency>\n<groupId>ch.qos.logback</groupId>\n<artifactId>logback-classic</artifactId>\n<version>${logback.version}</version>\n</dependency>\n");
+					buf1.append("<dependency>\n<groupId>org.projectlombok</groupId>\n<artifactId>lombok</artifactId>\n<version>${lombok.version}</version>\n</dependency>\n");
+					
+					buf1.append("<dependency>\n<groupId>org.slf4j</groupId>\n<artifactId>slf4j-api</artifactId>\n<version>${slf4j.version}</version>\n</dependency>\n");
+					buf1.append("<dependency>\n<groupId>org.slf4j</groupId>\n<artifactId>log4j-over-slf4j</artifactId>\n<version>${slf4j.version}</version>\n</dependency>\n");
+					buf1.append("<dependency>\n<groupId>org.slf4j</groupId>\n<artifactId>jcl-over-slf4j</artifactId>\n<version>${slf4j.version}</version>\n</dependency>\n");
+					//buf1.append("<dependency>\n<groupId>ch.qos.logback</groupId>\n<artifactId>logback-core</artifactId>\n<version>${<logback.version>}</version>\n</dependency>\n");
+					//buf1.append("<dependency>\n<groupId>ch.qos.logback</groupId>\n<artifactId>logback-core</artifactId>\n<version>${<logback.version>}</version>\n</dependency>\n");
+					
+					buf1.append("</dependencies>\n\n");
+					
+					
+					buf1.append("<build>\n");
+					buf1.append("<plugins>\n");
+					buf1.append("<!-- maven编译插件 -->\n");
+					buf1.append("<plugin>  \n");
+					buf1.append("   <groupId>org.apache.maven.plugins</groupId>\n");  
+					buf1.append("   <artifactId>maven-compiler-plugin</artifactId>\n");  
+					buf1.append("   <version>2.3.2</version>  \n");
+					buf1.append("   <configuration>    \n");
+					buf1.append("   	<source>1.8</source>  \n");
+					buf1.append("   	<target>1.8</target> \n"); 
+					buf1.append("   	<encoding>UTF-8</encoding>\n");
+					buf1.append("   	<compilerArguments>  \n");
+					buf1.append("          <verbose />  \n");
+					buf1.append("          <bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>  \n");
+					buf1.append("        </compilerArguments>\n");
+					buf1.append("   	</configuration>  \n");
+					buf1.append("   </plugin>\n\n");
+					buf1.append("<plugin>\n");
+					buf1.append("   <groupId>org.codehaus.mojo</groupId>\n");
+					buf1.append("   <artifactId>build-helper-maven-plugin</artifactId>\n");
+					buf1.append("   <version>1.7</version>\n");
+					buf1.append("   <executions>\n");
+					buf1.append("      <execution>\n");
+					buf1.append("         <id>add-source</id>\n");
+					buf1.append("         <phase>generate-sources</phase>\n");
+					buf1.append("         <goals><goal>add-source</goal></goals>\n");
+					buf1.append("         <configuration>\n");
+					buf1.append("            <sources>\n");
+					buf1.append("               <source>java/src</source>\n");
+			        buf1.append("            </sources>\n");
+					buf1.append("         </configuration>\n");
+					buf1.append("      </execution>\n");
+					buf1.append("   </executions>\n");
+					buf1.append("</plugin> ");
+					buf1.append("<plugin>");
+					buf1.append("   <groupId>org.apache.maven.plugins</groupId>");
+					buf1.append("   <artifactId>maven-shade-plugin</artifactId>");
+					buf1.append("   <version>2.4.1</version>");
+					buf1.append("   <executions>");
+					buf1.append("      <execution>");
+					buf1.append("         <phase>package</phase>");
+					buf1.append("      <goals>");
+					buf1.append("         <goal>shade</goal>");
+					buf1.append("      </goals>");
+					buf1.append("   <configuration>");
+					buf1.append("      <transformers>");
+					buf1.append("         <transformer implementation=\"org.apache.maven.plugins.shade.resource.ManifestResourceTransformer\">");
+					buf1.append("         </transformer>");
+					buf1.append("      </transformers>");
+					buf1.append("   </configuration>");
+					buf1.append("      </execution>");
+					buf1.append("   </executions>");
+					buf1.append("</plugin>");
+				    buf1.append("</plugins>\n");
+									
+	                buf1.append("<resources>\n");
+					buf1.append("<resource>\n<directory>plan1/</directory>\n<includes>\n<include>**/*.flow</include>\n</includes>\n<targetPath>drls</targetPath>\n<filtering>false</filtering>\n</resource>\n");
+					buf1.append("<!-- 将规则文件文件打包进jar包 -->\n<resource>\n<directory>plan1/rules</directory>\n<targetPath>drls</targetPath>\n<filtering>false</filtering>\n</resource>\n");
+					buf1.append("<!-- 将kmodule.xml文件打包进jar包 -->\n<resource>\n<directory>resources/META-INF</directory>\n<targetPath>META-INF</targetPath>\n<filtering>false</filtering>\n</resource>\n");
+					buf1.append("<resource>\n<directory>resources/</directory>\n<includes>\n<include>**/*.cfg</include>\n</includes>\n<filtering>false</filtering>\n</resource>\n");
+					buf1.append("<!-- 将application.properties文件打包进jar包的properties文件夹 -->\n<resource>\n<directory>resources/${package.environment}</directory>\n<includes>\n<include>**/*</include>\n</includes>\n<filtering>false</filtering>\n</resource>\n");
+					
+					buf1.append("</resources>\n");
+					
+					buf1.append("</build>\n");
+					
+					buf1.append("<profiles>\n");
+					buf1.append("<profile>\n<id>test</id>\n<activation>\n<activeByDefault>true</activeByDefault>\n</activation>\n"
+							+ "<properties>\n<package.environment>test</package.environment>\n</properties>\n</profile>\n");
+					
+					buf1.append("<profile>\n<id>dev</id>\n"
+							+ "<properties>\n<package.environment>dev</package.environment>\n</properties>\n</profile>\n");
+					
+					buf1.append("<profile>\n<id>pre-product</id>\n"
+							+ "<properties>\n<package.environment>pre-product</package.environment>\n</properties>\n</profile>\n");
+					
+					buf1.append("<profile>\n<id>product</id>\n"
+							+ "<properties>\n<package.environment>product</package.environment>\n</properties>\n</profile>\n");
+					
+					buf1.append("	</profiles>\n");
+					buf1.append("</project>\n");
+					contents=buf1.toString();
+			}
+			if(fileName.equals("config.properties")){
+				contents="#you can put keys, third interface verification information and third interface url in this file.";
+				
+			}
+			if(fileName.equals("log4j.properties")){
+				   StringBuffer buf01 = new StringBuffer();
+			       buf01.append("log4j.rootLogger=info, ServerDailyRollingFile, stdout\n");
+			       buf01.append("#format for log\n");
+				   buf01.append("log4j.appender.appenderName.layout=org.apache.log4j.patternLayout\n");
+	       
+				   buf01.append("#the log to console start\n");
+				   buf01.append("log4j.appender.console=org.apache.log4j.ConsoleAppender\n");
+				   buf01.append("log4j.appender.console.Threshold=DEBUG\n");
+			       buf01.append("log4j.appender.console.ImmediateFlush=true\n");
+			       buf01.append("log4j.appender.console.Target=System.out\n");
+			       buf01.append("log4j.appender.console.layout=org.apache.log4j.PatternLayout\n");
+			       buf01.append("log4j.appender.console.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} [%p] %m%n\n");
+			       buf01.append("#the log to console end\n\n\n");
+			       buf01.append("log4j.appender.ServerDailyRollingFile=org.apache.log4j.DailyRollingFileAppender\n");
+			       buf01.append("log4j.appender.ServerDailyRollingFile.DatePattern='.'yyyy-MM-dd\n");
+			       buf01.append("log4j.appender.ServerDailyRollingFile.File=../log4j/rd.log\n");
+			       buf01.append("log4j.appender.ServerDailyRollingFile.layout=org.apache.log4j.PatternLayout\n");
+			       buf01.append("log4j.appender.ServerDailyRollingFile.layout.ConversionPattern=%d - %m%n\n");
+			       buf01.append("log4j.appender.ServerDailyRollingFile.Append=true\n");
+			       buf01.append("log4j.appender.stdout=org.apache.log4j.ConsoleAppender\n");
+			       buf01.append("log4j.appender.stdout.layout=org.apache.log4j.PatternLayout\n");
+			       buf01.append("log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH\\:mm\\:ss} %p [%c] %m%n\n");
+			       buf01.append("\n");
+			       contents=buf01.toString()+"\n"+"#you can put keys, third interface verification information and third interface url in this file.";
+				
+			}
+			if(fileName.equals("logback.xml")){
+				  StringBuffer buf01 = new StringBuffer();
+			       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			       buf01.append("<configuration>\n");
+			       buf01.append("<appender name=\"STDOUT\" class=\"ch.qos.logback.core.ConsoleAppender\">\n");
+				   buf01.append("   <layout class=\"ch.qos.logback.classic.PatternLayout\">\n");
+	         	   buf01.append("    	<pattern>%d{ISO8601} [%thread] [%-5level] %logger - %msg%n</pattern>\n");
+				   buf01.append("    </layout>\n");
+				   buf01.append("    </appender>\n");
+				   
+				   buf01.append("<appender name=\"FILE\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n");
+				   buf01.append("   <file>/logs/rd.log</file>\n");
+	         	   buf01.append("    	<rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">\n");
+				   buf01.append("    <fileNamePattern>/logs/rd.log.%d{yyyy-MM-dd}.bak</fileNamePattern>\n");
+				   buf01.append("    <maxHistory>30</maxHistory>\n");
+				   buf01.append("    </rollingPolicy>\n");
+				   buf01.append("    <layout class=\"ch.qos.logback.classic.PatternLayout\">\n");
+				   buf01.append("    <Pattern>%d{ISO8601} [%thread] [%-5level] %logger - %msg%n</Pattern>\n");
+				   
+				   buf01.append("    </layout>\n");
+				   buf01.append("    </appender>\n");
+				   buf01.append("    <root level=\"info\">\n");
+				   buf01.append("    <appender-ref ref=\"STDOUT\"/>\n");
+				   buf01.append("    <appender-ref ref=\"FILE\"/>\n");
+			       buf01.append("    </root>\n");
+			       buf01.append("</configuration>\n");
+			       contents=buf01.toString();
+				
+				
+			}
+			
 			return new ByteArrayInputStream(contents.getBytes());
 		}
-/*     */ }
+}
 
-/* Location:           C:\Users\jjw8610\Desktop\EclipsePlugin\org.eclipse.jdt.ui.tests_3.10.101.v20151123-1510\
- * Qualified Name:     org.eclipse.jdt.ui.examples.MyProjectCreationWizard
- * JD-Core Version:    0.6.0
- */

@@ -94,8 +94,7 @@ public class NewDrlWizardPage extends WizardPage {
 	 */
 
 	private void initialize() {
-		if (selection != null && selection.isEmpty() == false
-				&& selection instanceof IStructuredSelection) {
+		if (selection != null && selection.isEmpty() == false && selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel.size() > 1)
 				return;
@@ -118,9 +117,8 @@ public class NewDrlWizardPage extends WizardPage {
 	 */
 
 	private void handleBrowse() {
-		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
-				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-				"Select new project container");
+		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
+				ResourcesPlugin.getWorkspace().getRoot(), false, "Select new project container");
 		if (dialog.open() == ContainerSelectionDialog.OK) {
 			Object[] result = dialog.getResult();
 			if (result.length == 1) {
@@ -134,16 +132,16 @@ public class NewDrlWizardPage extends WizardPage {
 	 */
 
 	private void dialogChanged() {
-		IResource container = ResourcesPlugin.getWorkspace().getRoot()
-				.findMember(new Path(getContainerName()));
+		IResource container = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(getContainerName()));
+		System.out.println(
+				"getContainerName() in dialogChanged of New DrlWizardPage for new Drlwizard:" + getContainerName());
 		String fileName = getFileName();
 
 		if (getContainerName().length() == 0) {
 			updateStatus("File container must be specified");
 			return;
 		}
-		if (container == null
-				|| (container.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0) {
+		if (container == null || (container.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0) {
 			updateStatus("File container must exist");
 			return;
 		}
@@ -166,7 +164,7 @@ public class NewDrlWizardPage extends WizardPage {
 				updateStatus("File extension must be \"drl\"");
 				return;
 			}
-			
+
 		}
 		updateStatus(null);
 	}

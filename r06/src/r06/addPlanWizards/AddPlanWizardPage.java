@@ -40,8 +40,8 @@ public class AddPlanWizardPage extends WizardPage {
 	 */
 	public AddPlanWizardPage(ISelection selection) {
 		super("wizardPage");
-		setTitle("*.properties Editor File");
-		setDescription("This wizard creates a new file with *.properties extension that can be opened by a multi-page editor.");
+		setTitle("add a new plan");
+		setDescription("This wizard creates a new plan.");
 		this.selection = selection;
 	}
 
@@ -64,26 +64,8 @@ public class AddPlanWizardPage extends WizardPage {
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
 			}
-		});
-
-		Button button = new Button(container, SWT.PUSH);
-		button.setText("Browse...");
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleBrowse();
-			}
-		});
-		label = new Label(container, SWT.NULL);
-		label.setText("&File name:");
-
-		fileText = new Text(container, SWT.BORDER | SWT.SINGLE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fileText.setLayoutData(gd);
-		fileText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				dialogChanged();
-			}
-		});
+		});		
+		
 		initialize();
 		dialogChanged();
 		setControl(container);
@@ -136,37 +118,18 @@ public class AddPlanWizardPage extends WizardPage {
 	private void dialogChanged() {
 		IResource container = ResourcesPlugin.getWorkspace().getRoot()
 				.findMember(new Path(getContainerName()));
-		String fileName = getFileName();
+		
 
 		if (getContainerName().length() == 0) {
-			updateStatus("File container must be specified");
+			updateStatus("plan name must be specified");
 			return;
 		}
-		if (container == null
-				|| (container.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0) {
-			updateStatus("File container must exist");
-			return;
-		}
+		
 		if (!container.isAccessible()) {
 			updateStatus("Project must be writable");
 			return;
 		}
-		if (fileName.length() == 0) {
-			updateStatus("File name must be specified");
-			return;
-		}
-		if (fileName.replace('\\', '/').indexOf('/', 1) > 0) {
-			updateStatus("File name must be valid");
-			return;
-		}
-		int dotLoc = fileName.lastIndexOf('.');
-		if (dotLoc != -1) {
-			String ext = fileName.substring(dotLoc + 1);
-			if (ext.equalsIgnoreCase("properties") == false) {
-				updateStatus("File extension must be \"properties\"");
-				return;
-			}
-		}
+		
 		updateStatus(null);
 	}
 

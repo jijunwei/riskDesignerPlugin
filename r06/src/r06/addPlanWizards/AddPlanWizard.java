@@ -7,6 +7,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.*;
@@ -14,6 +16,8 @@ import org.eclipse.core.runtime.CoreException;
 import java.io.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
+
+import util.GetString;
 
 /**
  * This is a sample new wizard. Its role is to create a new file 
@@ -90,6 +94,12 @@ public class AddPlanWizard extends Wizard implements INewWizard {
 		IProgressMonitor monitor)
 		throws CoreException {
 		// create a sample file
+		
+		String s=containerName;
+		String projectName=GetString.getMessage(s, 1);
+		System.out.println("project name:"+projectName);
+		
+		
 		monitor.beginTask("Creating " + fileName, 2);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource resource = root.findMember(new Path(containerName));
@@ -99,7 +109,7 @@ public class AddPlanWizard extends Wizard implements INewWizard {
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fileName));
 		try {
-			InputStream stream = openContentStream();
+			InputStream stream = openContentStream(fileName);
 			if (file.exists()) {
 				file.setContents(stream, true, true, monitor);
 			} else {
@@ -127,9 +137,37 @@ public class AddPlanWizard extends Wizard implements INewWizard {
 	 * We will initialize file contents with a sample text.
 	 */
 
-	private InputStream openContentStream() {
-		String contents =
-			"This is the initial file contents for *.properties file that should be word-sorted in the Preview page of the multi-page editor";
+	private InputStream openContentStream(String fileName) {
+		String contents ="";
+		if(fileName.equals("risk.flow")){
+			   
+			   String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+			   System.out.println(uuid);
+			   StringBuffer buf01 = new StringBuffer();
+		       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		       buf01.append("<definitions id=\"Definition\"\n");
+			   buf01.append("    targetNamespace=\"http://www.jboss.org/drools\"\n");
+    
+			   buf01.append("    typeLanguage=\"http://www.java.com/javaTypes\"\n");
+			   buf01.append("    expressionLanguage=\"http://www.mvel.org/2.0\"\n");
+			   buf01.append("    xmlns=\"http://www.omg.org/spec/BPMN/20100524/MODEL\"\n");
+		       buf01.append("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+		       buf01.append("    xsi:schemaLocation=\"http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd\"\n");
+		       buf01.append("    xmlns:g=\"http://www.jboss.org/drools/flow/gpd\"\n");
+		       buf01.append("    xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\"\n");
+		       buf01.append("    xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\"\n");
+		       buf01.append("    xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\"\n");
+		       buf01.append("    xmlns:tns=\"http://www.jboss.org/drools\">\n");
+		       
+		       buf01.append("    <process processType=\"Private\" isExecutable=\"true\" id=\""+uuid+"\" name=\""+uuid+"\" >\n");
+		       buf01.append("	 </process>\n");
+		       buf01.append("<bpmndi:BPMNDiagram>\n");
+		       buf01.append("	<bpmndi:BPMNPlane bpmnElement=\""+uuid+"\" >\n");
+		       buf01.append("    </bpmndi:BPMNPlane>\n");
+		       buf01.append("</bpmndi:BPMNDiagram>\n");
+		       buf01.append("</definitions>\n");
+		       contents=buf01.toString();
+		}
 		return new ByteArrayInputStream(contents.getBytes());
 	}
 

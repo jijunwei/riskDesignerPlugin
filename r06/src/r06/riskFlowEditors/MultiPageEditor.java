@@ -103,8 +103,10 @@ public class MultiPageEditor extends MultiPageEditorPart implements IResourceCha
 			}
 		});*/
 		PaintExample instance = new PaintExample(composite);
+		
+		
 		instance.createToolBar(composite);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		//composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		instance.createGUI(composite);
 		instance.setDefaults();
 		

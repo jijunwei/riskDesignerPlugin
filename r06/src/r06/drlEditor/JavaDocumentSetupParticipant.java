@@ -17,6 +17,8 @@ import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
 
+import r06.Activator;
+
 /**
  *
  */
@@ -33,8 +35,8 @@ public class JavaDocumentSetupParticipant implements IDocumentSetupParticipant {
 	public void setup(IDocument document) {
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension3= (IDocumentExtension3) document;
-			IDocumentPartitioner partitioner= new FastPartitioner(JavaEditorExamplePlugin.getDefault().getJavaPartitionScanner(), JavaPartitionScanner.JAVA_PARTITION_TYPES);
-			extension3.setDocumentPartitioner(JavaEditorExamplePlugin.JAVA_PARTITIONING, partitioner);
+			IDocumentPartitioner partitioner= new FastPartitioner(Activator.getDefault().getJavaPartitionScanner(), JavaPartitionScanner.JAVA_PARTITION_TYPES);
+			extension3.setDocumentPartitioner(Activator.JAVA_PARTITIONING, partitioner);
 			partitioner.connect(document);
 		}
 	}

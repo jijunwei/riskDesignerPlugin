@@ -7,6 +7,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.*;
@@ -128,8 +130,32 @@ public class NewRiskFlowWizard extends Wizard implements INewWizard {
 	 */
 
 	private InputStream openContentStream() {
-		String contents =
-			"This is the initial file contents for *.flow file that should be word-sorted in the Preview page of the multi-page editor";
+		   String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+		   System.out.println(uuid);
+		   StringBuffer buf01 = new StringBuffer();
+	       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	       buf01.append("<definitions id=\"Definition\"\n");
+		   buf01.append("    targetNamespace=\"http://www.jboss.org/drools\"\n");
+ 
+		   buf01.append("    typeLanguage=\"http://www.java.com/javaTypes\"\n");
+		   buf01.append("    expressionLanguage=\"http://www.mvel.org/2.0\"\n");
+		   buf01.append("    xmlns=\"http://www.omg.org/spec/BPMN/20100524/MODEL\"\n");
+	       buf01.append("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+	       buf01.append("    xsi:schemaLocation=\"http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd\"\n");
+	       buf01.append("    xmlns:g=\"http://www.jboss.org/drools/flow/gpd\"\n");
+	       buf01.append("    xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\"\n");
+	       buf01.append("    xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\"\n");
+	       buf01.append("    xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\"\n");
+	       buf01.append("    xmlns:tns=\"http://www.jboss.org/drools\">\n");
+	       
+	       buf01.append("    <process processType=\"Private\" isExecutable=\"true\" id=\""+uuid+"\" name=\""+uuid+"\" >\n");
+	       buf01.append("	 </process>\n");
+	       buf01.append("<bpmndi:BPMNDiagram>\n");
+	       buf01.append("	<bpmndi:BPMNPlane bpmnElement=\""+uuid+"\" >\n");
+	       buf01.append("    </bpmndi:BPMNPlane>\n");
+	       buf01.append("</bpmndi:BPMNDiagram>\n");
+	       buf01.append("</definitions>\n");
+	       String contents=buf01.toString();
 		return new ByteArrayInputStream(contents.getBytes());
 	}
 

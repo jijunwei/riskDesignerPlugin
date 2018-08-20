@@ -27,6 +27,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.Workbench;
 
 import util.FileUtils;
+import util.GetString;
 import util.JsonUtil;
 import util.XmlJSON;
 
@@ -121,6 +122,7 @@ public class NewDrlWizard extends Wizard implements INewWizard {
 				file.create(stream, true, monitor);
 			}
 			stream.close();
+			
 		} catch (IOException e) {
 		}
 		monitor.worked(1);
@@ -143,32 +145,10 @@ public class NewDrlWizard extends Wizard implements INewWizard {
 	 * @throws JavaModelException 
 	 */
 
-	public  IProject getCurrentProject(){    
-        ISelectionService selectionService =     
-            Workbench.getInstance().getActiveWorkbenchWindow().getSelectionService();    
-    
-        ISelection selection = selectionService.getSelection();    
-    
-        IProject project = null;    
-        if(selection instanceof IStructuredSelection) {    
-            Object element = ((IStructuredSelection)selection).getFirstElement();    
-    
-            if (element instanceof IResource) {    
-                project= ((IResource)element).getProject();    
-            } else if (element instanceof PackageFragmentRootContainer) {    
-                IJavaProject jProject =     
-                    ((PackageFragmentRootContainer)element).getJavaProject();    
-                project = jProject.getProject();    
-            } else if (element instanceof IJavaElement) {    
-                IJavaProject jProject= ((IJavaElement)element).getJavaProject();    
-                project = jProject.getProject();    
-            }    
-        }     
-        return project;    
-    }    
+	
 	private InputStream openContentStream(String filename,String containerName) throws JavaModelException {
 		//String contents ="This is the initial file contents for drl file that should be word-sorted in the Preview page of the multi-page editor";
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		
 		/*
 		String filecontent=FileUtils.readFile(".project");
         System.out.println(filecontent);
@@ -177,31 +157,40 @@ public class NewDrlWizard extends Wizard implements INewWizard {
         Map<String,Object> m=JsonUtil.jsonToMap(json);
         String name=(String)m.get("name");
         System.out.println(m.get("name"));*/
-		String name="test";
-		IJavaProject jproject = (IJavaProject) root.getProject(name);
-		System.out.println("in drlWizard:"+jproject.getElementName());
 		
-		IProject project = getCurrentProject();
 		
-		IPackageFragmentRoot root1 = jproject.getPackageFragmentRoot(project);
-		int beginIndex=containerName.indexOf("/");
-		int endIndex=containerName.length();
-		String containerName0=containerName.substring(beginIndex, endIndex).replace("/",".").substring(1);
-		IPackageFragment pack4 = root1.createPackageFragment(containerName0, false, null);
-		/* 77 */       StringBuffer buf4 = new StringBuffer();
-		/* 78 */	   buf4.append("/**section package  ;**/ {\n");       
-						buf4.append("package com.xujin.demo;\n");
-		/* 79 */       buf4.append("/**section import  ;**/ \n\n");
+		
+		
+		String projectName=GetString.getMessage(containerName, 1);
+		System.out.println("projectName in NewDrlWizard:"+projectName);
+	
+		
+		
+		int endIndex2=filename.indexOf(".");
+		String name=filename.substring(0, endIndex2);
+		
+		String subDirectory=GetString.getMessage(containerName, 3);
+		
+		int begin=subDirectory.indexOf("/");
+		String s4=subDirectory.substring(begin+1);
+		int begin2=s4.indexOf("/");
+		String s5=s4.substring(begin2+1);
+		String ruleGroup=GetString.getPackage(s5);
+		System.out.println("ruleGroup:"+ruleGroup);
+		       StringBuffer buf4 = new StringBuffer();
+			   buf4.append("/**section package  ;**/ {\n");       
+			   buf4.append("package com.xujin."+projectName+";\n");
+		       buf4.append("/**section import  ;**/ \n\n");
 
-		/* 80 */       buf4.append("rule \""+"one"+"\"\n");
-		/* 81 */       buf4.append("        salience 1\n");
-		/* 82 */       buf4.append("        no-loop\n");
-		/* 83 */       buf4.append("        lock-on-active true\n");
-		/* 84 */       buf4.append("        ruleflow-group \" "+"."+"\"\n\n");
-		/* 85 */       buf4.append("        when\n\n");
+		       buf4.append("rule \""+ruleGroup+"."+name+"\"\n");
+		       buf4.append("        salience 1\n");
+		       buf4.append("        no-loop\n");
+		       buf4.append("        lock-on-active true\n");
+		       buf4.append("        ruleflow-group \""+ruleGroup+"\"\n\n");
+		       buf4.append("        when\n\n");
 					   buf4.append("        then\n\n");
 					   buf4.append("        end\n\n");
-		/* 86 */       pack4.createCompilationUnit(filename, buf4.toString(), false, null);
+		
 		return new ByteArrayInputStream(buf4.toString().getBytes());
 	}
 

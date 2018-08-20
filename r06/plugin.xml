@@ -42,13 +42,24 @@
             name="risk rule Editor"
             extensions="drl"
             icon="icons/drl.png"
+            contributorClass="r06.drlEditor.MultiPageEditorContributor"
+            class="r06.drlEditor.MultiPageEditor"
+            id="r06.drlEditor.MultiPageEditor">
+      </editor>
+   </extension>  
+  <!--
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="risk rule Editor"
+            extensions="drl"
+            icon="icons/drl.png"
             contributorClass="r06.drlEditor.JavaActionContributor"
             class="r06.drlEditor.JavaEditor"
             id="r06.drlEditor.JavaEditor">
       </editor>
-   </extension>  
-   
-
+   </extension> 
+ -->
    
    <extension
          id="drlEditorSetupParticipant"
@@ -299,7 +310,69 @@
             class="r06.views.PlanPropertiesView"
             id="r06.views.PlanPropertiesView">
       </view>
+      
+	<view id="r06.views.word.labelview"
+		name="Label View"
+		icon="icons\view.gif"
+		class="r06.views.word.LabelView"/>
+	<view id="r06.views.word.wordview"
+		name="Word View"
+		icon="icons\view.gif"
+		category="r06"
+		class="r06.views.word.WordView"/>
+	<view id="r06.views.word.listenerview"
+		name="Listener View"
+		icon="icons\view.gif"
+		category="r06"
+		class="r06.views.word.ListenerView"/>
+     
    </extension>
+    
+
+<extension point="org.eclipse.ui.popupMenus">
+	<objectContribution
+		id="org.eclipse.ui.articles.pm1"
+		objectClass="org.eclipse.ui.articles.views.Word">
+		<action 
+			id="org.eclipse.ui.articles.a1"
+			label="Word Action" 
+            menubarPath="additions" 
+            class="org.eclipse.ui.articles.views.WordActionDelegate"/>
+	</objectContribution>
+	<objectContribution
+		id="org.eclipse.ui.articles.pm2"
+		objectClass="org.eclipse.ui.articles.views.Word">
+		<filter name="name" value="Blue"/>
+		<action 
+			id="org.eclipse.ui.articles.a2"
+			label="Blue Action" 
+            menubarPath="additions" 
+            class="org.eclipse.ui.articles.views.BlueActionDelegate"/>
+	</objectContribution>
+</extension>
+    <extension point="org.eclipse.ui.popupMenus">
+     <objectContribution
+                id="org.eclipse.ui.articles.pm1"
+             objectClass="org.eclipse.ui.articles.views.Word">
+                <action 
+                        id="org.eclipse.ui.articles.a1"
+                        label="Word Action" 
+                        menubarPath="additions" 
+                        class="org.eclipse.ui.articles.views.WordActionDelegate"/>
+        </objectContribution>
+      </extension>
+      <extension point="org.eclipse.ui.popupMenus">
+        <objectContribution
+                id="org.eclipse.ui.articles.pm2"
+                objectClass="org.eclipse.ui.articles.views.Word">
+             <filter name="name" value="Blue"/>
+                <action 
+                        id="org.eclipse.ui.articles.a2"
+                        label="Blue Action" 
+                        menubarPath="additions" 
+                        class="org.eclipse.ui.articles.views.BlueActionDelegate"/>
+        </objectContribution>
+	</extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">
       <viewerActionBinding
@@ -337,7 +410,7 @@
             class="r06.handlers.RiskDesignerHandler">
       </handler>
    </extension>
-   <extension
+   <!--<extension
          point="org.eclipse.ui.bindings">
       <key
             commandId="r06.commands.sampleCommand"
@@ -346,6 +419,7 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
    </extension>
+   -->
    
  <!-- ****************  NEW solution PROJECT WIZARD ******************* -->
  

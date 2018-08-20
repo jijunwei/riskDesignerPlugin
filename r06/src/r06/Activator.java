@@ -1,19 +1,37 @@
 package r06;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import r06.drlEditor.JavaPartitionScanner;
+import r06.drlEditor.java.JavaCodeScanner;
+import r06.drlEditor.javadoc.JavaDocScanner;
+import r06.drlEditor.util.JavaColorProvider;
 
 /**
  * The activator class controls the plug-in life cycle
  */
 public class Activator extends AbstractUIPlugin {
-
 	// The plug-in ID
 	public static final String PLUGIN_ID = "r06"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
+	
+	public final static String JAVA_PARTITIONING= "__java_partitioning"; //$NON-NLS-1$
+
+
+	private JavaPartitionScanner fPartitionScanner;
+
+	private JavaColorProvider fColorProvider;
+
+	private JavaCodeScanner fCodeScanner;
+
+	private JavaDocScanner fDocScanner;
 	
 	/**
 	 * The constructor
@@ -57,5 +75,57 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+	
+	/**
+	 * Return a scanner for creating Java partitions.
+	 * 
+	 * @return a scanner for creating Java partitions
+	 */
+	public JavaPartitionScanner getJavaPartitionScanner() {
+		if (fPartitionScanner == null)
+			fPartitionScanner= new JavaPartitionScanner();
+		return fPartitionScanner;
+	}
+
+	/**
+	 * Returns the singleton Java code scanner.
+	 * 
+	 * @return the singleton Java code scanner
+	 */
+	public RuleBasedScanner getJavaCodeScanner() {
+		if (fCodeScanner == null)
+			fCodeScanner= new JavaCodeScanner(getJavaColorProvider());
+		return fCodeScanner;
+	}
+
+	/**
+	 * Returns the singleton Java color provider.
+	 * 
+	 * @return the singleton Java color provider
+	 */
+	public JavaColorProvider getJavaColorProvider() {
+		if (fColorProvider == null)
+			fColorProvider= new JavaColorProvider();
+		return fColorProvider;
+	}
+
+	/**
+	 * Returns the singleton Javadoc scanner.
+	 * 
+	 * @return the singleton Javadoc scanner
+	 */
+	public RuleBasedScanner getJavaDocScanner() {
+		if (fDocScanner == null)
+			fDocScanner= new JavaDocScanner(fColorProvider);
+		return fDocScanner;
+	}
+
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+
+	public static void log(Throwable e) {
+		log(new Status(IStatus.ERROR, PLUGIN_ID, 0, "Plugin: internal error", e)); //$NON-NLS-1$
 	}
 }
