@@ -1,7 +1,13 @@
 package r06.drlWizards;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ISelection;
@@ -132,12 +138,13 @@ public class NewDrlWizardPage extends WizardPage {
 	 */
 
 	private void dialogChanged() {
-		IResource container = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(getContainerName()));
+		String containerName=getContainerName();
+		IResource container = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(containerName));
 		System.out.println(
-				"getContainerName() in dialogChanged of New DrlWizardPage for new Drlwizard:" + getContainerName());
+				"getContainerName() in dialogChanged of New DrlWizardPage for new Drlwizard:" + containerName);
 		String fileName = getFileName();
-
-		if (getContainerName().length() == 0) {
+        System.out.println(container.toString());
+		if (containerName.length() == 0) {
 			updateStatus("File container must be specified");
 			return;
 		}
@@ -153,6 +160,16 @@ public class NewDrlWizardPage extends WizardPage {
 			updateStatus("File name must be specified");
 			return;
 		}
+		
+		/*final IFile file = ((IContainer) container).getFile(new Path(fileName));
+		if (file.exists()) {
+				
+				System.out.println("file if exists:"+(container.toString()+"/")+fileName);
+				updateStatus("File exists,please input a new filename");
+				return;
+			}*/
+			
+		
 		if (fileName.replace('\\', '/').indexOf('/', 1) > 0) {
 			updateStatus("File name must be valid");
 			return;

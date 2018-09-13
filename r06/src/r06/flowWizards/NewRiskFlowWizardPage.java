@@ -1,6 +1,7 @@
 package r06.flowWizards;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -159,6 +160,21 @@ public class NewRiskFlowWizardPage extends WizardPage {
 			updateStatus("File name must be valid");
 			return;
 		}
+		final IFile file = ((IContainer) container).getFile(new Path(fileName));
+		if (file.exists()) {
+				
+				System.out.println("file if exists:"+(container.toString()+"/")+fileName);
+				updateStatus("File exists,please input a new filename");
+				return;
+			}
+		final IFile file2 = ((IContainer) container).getFile(new Path("risk.flow"));
+		if (file2.exists()) {
+			
+			System.out.println("a risk flow exists:"+(container.toString()+"/")+fileName);
+			updateStatus("one plan only has a risk flow, already exists,you can create a new plan then add a risk flow");
+			return;
+		}
+		
 		int dotLoc = fileName.lastIndexOf('.');
 		if (dotLoc != -1) {
 			String ext = fileName.substring(dotLoc + 1);

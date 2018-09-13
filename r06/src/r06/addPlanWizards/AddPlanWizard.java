@@ -2,21 +2,34 @@ package r06.addPlanWizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.operation.*;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
+import java.util.Properties;
 import java.util.UUID;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+
 import java.io.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
+import r06.Activator;
+import util.FileUtils;
 import util.GetString;
 
 /**
@@ -33,7 +46,7 @@ import util.GetString;
 public class AddPlanWizard extends Wizard implements INewWizard {
 	private AddPlanWizardPage page;
 	private ISelection selection;
-
+	private IConfigurationElement fConfigElement;
 	/**
 	 * Constructor for SampleNewWizard.
 	 */
@@ -45,10 +58,63 @@ public class AddPlanWizard extends Wizard implements INewWizard {
 	/**
 	 * Adding the page to the wizard.
 	 */
-
+	 public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data)
+	  {
+	/*  81 */     this.fConfigElement = cfig;
+	  }
 	public void addPages() {
 		page = new AddPlanWizardPage(selection);
 		addPage(page);
+	}
+	
+	public void addsubfolder(IProgressMonitor monitor,String projectName,String containerName,String subfoldername){
+		
+		//获取工作区根  
+		  
+		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot(); 
+		//从工作区根获得项目实例  
+		IProject project = myWorkspaceRoot.getProject(projectName);
+        
+		//获取文件夹实例  
+		
+		
+		IFolder folder = project.getFolder(subfoldername);  
+	try { 
+		if (!folder.exists()) {
+			
+				folder.create(true, true, monitor);
+		
+		}	
+		
+		
+	} catch (CoreException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+}
+	public void addfolder(IProgressMonitor monitor,String projectName,String containerName,String planName){
+	
+			//获取工作区根  
+			  
+			IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot(); 
+			//从工作区根获得项目实例  
+			IProject project = myWorkspaceRoot.getProject(projectName);
+            
+			//获取文件夹实例  
+			  
+			IFolder folder = project.getFolder(planName);  
+		try { 
+			if (!folder.exists()) {
+				
+					folder.create(true, true, monitor);
+			
+			}	
+			
+			
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -58,17 +124,115 @@ public class AddPlanWizard extends Wizard implements INewWizard {
 	 */
 	public boolean performFinish() {
 		final String containerName = page.getContainerName();
-		final String fileName = page.getFileName();
+		final String planName = page.getFileName();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					doFinish(containerName, fileName, monitor);
+				try {			
+				        
+				    String projectName=containerName.substring(1);
+					String container3=containerName+"/"+planName;
+			        String fileName3 = "risk.flow";
+			        
+				    String container7=containerName+"/"+planName+"/rules";
+			        String fileName7 = "demo.drl";
+			        String container5=containerName+"/"+planName+"/rules/a/b";
+			        String fileName5 = "demo2.drl";
+			        addfolder(monitor,projectName,container3,planName);
+			        doFinish(container3, fileName3, monitor);
+			        
+			       
+			        
+			        addsubfolder(monitor,projectName,container7,planName+"/rules");
+			        doFinish(container7, fileName7, monitor);
+			        
+			        addsubfolder(monitor,projectName,container5,planName+"/rules/a");
+			        addsubfolder(monitor,projectName,container5,planName+"/rules/a/b");
+			        doFinish(container5, fileName5, monitor);
+			        
+			        addAndModifyCfgFile(projectName,planName);
+					//doFinish(containerName, planName, monitor);
+					
 				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
+					
+					   e.printStackTrace();
+			 		   System.err.println("after doFinish():"+e.getMessage());
+			 		  throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
 				}
 			}
+
+			private void addAndModifyCfgFile(String projectName,String planName){
+				// TODO Auto-generated method stub
+				
+
+				//获取工作区根  
+				  
+				IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot(); 
+				//从工作区根获得项目实例  
+				IProject project = myWorkspaceRoot.getProject(projectName);
+				
+			    //为正确获取方式
+				String filePath=project.getLocation().toString()+"/resources/default.cfg";
+				
+				String content=FileUtils.readFile(filePath);
+				BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content.getBytes(Charset.forName("utf8"))), Charset.forName("utf8")));  
+				 String line; 
+				 
+				 try{
+					 StringBuffer buf01 = new StringBuffer();
+					 String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+					 while ( (line = br.readLine()) != null ) {  
+					     if(!line.trim().equals("")){
+					    	  	 
+					    	 
+					    	 if(line.contains("</Solution>")){
+					    		 						       
+								   buf01.append("\n<Plan id=\""+uuid+"\" name=\""+planName+"\" isActive=\"false\">\n");
+					       		   buf01.append("    <Models>\n");
+								   buf01.append("      <!-- 添加一个 out model -->\n");
+								   buf01.append("      <Model type=\"out\" id=\"*\"/>\n");
+								   buf01.append("      <!-- 添加一个或多个in model-->\n");
+								   buf01.append("      <Model type=\"in\" id=\"*\"/>\n");
+							       buf01.append("    </Models>\n");
+							       buf01.append("    </Plan>\n");
+							       buf01.append("</Solution>\n");
+							       buf01.toString();
+						    }
+					    	 
+					    	 
+					    	 
+					     }       		    	 
+					 } 
+					 content=content.replace("</Solution>", buf01.toString());
+					 System.out.println(content);
+					 FileUtils.writeFile(filePath,content);
+					 BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
+					/* IEditorPart[] parts = 
+							 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getEditors();*/
+					 	 
+					 
+					 IWorkbenchPage[] pages = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getPages();
+					 for(int i=0;i<pages.length;i++){
+						 String title=pages[i].getActiveEditor().getTitle();
+					 if(title.equals("default.cfg")){
+						 Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().setActivePage(pages[i]);	
+						 pages[i].saveEditor(pages[i].getActiveEditor(), true);
+					 }
+					
+						
+					 }
+					 
+					 }catch(Exception e){
+						 System.out.println(e.getMessage());
+						 
+					 }
+				 
+				 
+				 
+			}
+			
+			
 		};
 		try {
 			getContainer().run(true, false, op);
@@ -95,11 +259,9 @@ public class AddPlanWizard extends Wizard implements INewWizard {
 		throws CoreException {
 		// create a sample file
 		
-		String s=containerName;
-		String projectName=GetString.getMessage(s, 1);
-		System.out.println("project name:"+projectName);
 		
-		
+	       
+	        
 		monitor.beginTask("Creating " + fileName, 2);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource resource = root.findMember(new Path(containerName));
@@ -167,6 +329,38 @@ public class AddPlanWizard extends Wizard implements INewWizard {
 		       buf01.append("</bpmndi:BPMNDiagram>\n");
 		       buf01.append("</definitions>\n");
 		       contents=buf01.toString();
+		}
+		if(fileName.equals("demo.drl")){
+			StringBuffer buf4 = new StringBuffer();
+			   buf4.append("/**section package  ;**/ \n");       
+				buf4.append("package com.xujin.demo;\n");
+				buf4.append("/**section import  ;**/ \n\n");
+
+		       buf4.append("rule \""+"rules.demo"+"\"\n");
+		       buf4.append("        salience 1\n");
+		       buf4.append("        no-loop\n");
+		       buf4.append("        lock-on-active true\n");
+		       buf4.append("        ruleflow-group \""+"rules"+"\"\n\n");
+		       buf4.append("        when\n\n");
+			   buf4.append("        then\n\n");
+			   buf4.append("        end\n\n");
+			   contents=buf4.toString();
+		}
+		if(fileName.equals("demo2.drl")){
+		   StringBuffer buf41 = new StringBuffer();
+		   buf41.append("/**section package  ;**/ \n");       
+		   buf41.append("package com.xujin.demo;\n");
+	       buf41.append("/**section import  ;**/ \n\n");
+	
+	       buf41.append("rule \""+"a.b"+".demo2"+"\"\n");
+	       buf41.append("        salience 1\n");
+	       buf41.append("        no-loop\n");
+	       buf41.append("        lock-on-active true\n");
+	       buf41.append("        ruleflow-group \""+"a.b"+"\"\n");
+	       buf41.append("        when\n\n");
+		   buf41.append("        then\n\n");
+		   buf41.append("        end\n\n");
+		   contents=buf41.toString();
 		}
 		return new ByteArrayInputStream(contents.getBytes());
 	}

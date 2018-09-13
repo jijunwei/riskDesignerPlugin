@@ -20,7 +20,7 @@
             name="flow Multi-page Editor"
             extensions="flow"
             icon="icons/sample.gif"
-            contributorClass="r06.editors2.MultiPageEditorContributor"
+            contributorClass="r06.riskFlowEditors.MultiPageEditorContributor"
             class="r06.riskFlowEditors.MultiPageEditor"
             id="r06.riskFlowEditors.MultiPageEditor">
       </editor>
@@ -31,9 +31,20 @@
             name="cfg Editor"
             extensions="cfg"
             icon="icons/sample.gif"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            contributorClass="r06.cfgXmlEditors.MultiPageEditorContributor"
             class="r06.cfgXmlEditors.CFGEditor"
             id="r06.cfgXmlEditors.CfgEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="properties Multi-page Editor"
+            extensions="properties"
+            icon="icons/sample.gif"
+            contributorClass="r06.propertiesWizards.MultiPageEditorContributor"
+            class="r06.propertiesWizards.MultiPageEditor"
+            id="r06.propertiesWizards.MultiPageEditor">
       </editor>
    </extension>
    <extension
@@ -71,11 +82,9 @@
       </participant>
    </extension>
    
-<!-- =========================================================================== -->
-<!-- Template Editor Example                                                     -->
-<!-- =========================================================================== -->
 
-   <extension
+<!--
+<extension
          point="org.eclipse.ui.editors">
       <editor
             name="drl.editor.name"
@@ -132,21 +141,11 @@
       		translations="$nl$/templates/ant.properties">
       </include>
    </extension>
-   
-   <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            name="properties Multi-page Editor"
-            extensions="properties"
-            icon="icons/sample.gif"
-            contributorClass="r06.riskFlowEditors.MultiPageEditorContributor"
-            class="r06.riskFlowEditors.MultiPageEditor"
-            id="r06.riskFlowEditors.MultiPageEditor">
-      </editor>
-   </extension>
+   -->
    
    
-    <!--<extension-point id="splashExtension" name="Splash Extensions" schema="schema/splashExtension.exsd"/>-->
+   
+    
 
    <extension
          id="RiskDesignerBuilder"
@@ -187,16 +186,16 @@
             id="r06.addRemoveRiskDesigner Nature">
       </command>
      
-      <category
-            name="Sample Category"
+      <!--<category
+            name="RiskDesigner Category"
             id="r06.commands.category">
       </category>
       <command
-            name="Sample Command"
+            name="Create new RiskDesigner project"
             categoryId="r06.commands.category"
-            id="r06.commands.sampleCommand">
+            id="r06.commands.createProjectCommand">
       </command>
-      
+      -->
    </extension>
    
    <extension
@@ -258,23 +257,54 @@
          <menu
                label="riskDesignerMenu"
                mnemonic="M"
-               id="r06.menus.sampleMenu">
+               id="r06.menus.RDMenu">
             <command
-                  commandId="r06.commands.sampleCommand"
+                  commandId="createRDProject"
                   mnemonic="S"
-                  id="r06.menus.sampleCommand">
+                  id="r06.menus.createProjectCommand"
+                  tooltip="create a new risk project">
+            </command>
+            <command
+                  commandId="buildRDProject"
+                  mnemonic="B"
+                  id="r06.menus.buildProject"
+                  tooltip="Build project">
+            </command>
+            <command
+                  commandId="deployRDProject"
+                  mnemonic="D"
+                  id="r06.menus.deployProject"
+                  tooltip="Deploy...">
             </command>
          </menu>
       </menuContribution>
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
          <toolbar
-               id="r06.toolbars.sampleToolbar">
+               id="r06.toolbars.CreateProjectToolbar">
             <command
-                  commandId="r06.commands.sampleCommand"
+                  commandId="createRDProject"
                   icon="icons/sln.png"
-                  tooltip="Say riskDesigner"
-                  id="r06.toolbars.sampleCommand">
+                  tooltip="create a new risk project"
+                  id="r06.toolbars.createProjectCommand">
+            </command>
+         </toolbar>
+          <toolbar
+               id="r06.toolbars.BuildProjectToolbar">
+            <command
+                  commandId="buildRDProject"
+                  icon="icons/config.png"
+                  tooltip="build risk project"
+                  id="r06.toolbars.buildProjectCommand">
+            </command>
+         </toolbar>
+          <toolbar
+               id="r06.toolbars.DeployProjectToolbar">
+            <command
+                  commandId="deployRDProject"
+                  icon="icons/rcp.png"
+                  tooltip="deploy risk solution"
+                  id="r06.toolbars.deployProjectCommand">
             </command>
          </toolbar>
       </menuContribution>
@@ -328,7 +358,7 @@
      
    </extension>
     
-
+<!--
 <extension point="org.eclipse.ui.popupMenus">
 	<objectContribution
 		id="org.eclipse.ui.articles.pm1"
@@ -373,6 +403,7 @@
                         class="org.eclipse.ui.articles.views.BlueActionDelegate"/>
         </objectContribution>
 	</extension>
+	-->
    <extension
          point="org.eclipse.ui.navigator.viewer">
       <viewerActionBinding
@@ -406,8 +437,16 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            commandId="r06.commands.sampleCommand"
-            class="r06.handlers.RiskDesignerHandler">
+            commandId="createRDProject"
+            class="r06.handlers.CreateProjectHandler">
+      </handler>
+      <handler
+            commandId="buildRDProject"
+            class="r06.handlers.BuildProjectHandler">
+      </handler>
+      <handler
+            commandId="deployRDProject"
+            class="r06.handlers.DeployProjectHandler">
       </handler>
    </extension>
    <!--<extension
@@ -478,7 +517,7 @@
 		icon="icons/sln.png"
 		project="true"
 		finalPerspective="r06.perspectives.RiskDesignerPerspective">
-		<description>New solution Project (xujin tech)</description>
+		<description>New solution Project (xujin FinTech)</description>
     </wizard>
     <wizard
 		id="r06.addPlanWizards"
@@ -551,26 +590,34 @@
          </description>
       </wizard>
    </extension>
-   <!--File:addRiskPlan-->
+   
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             id="r06.contribution1">
          <menu
-               label="addRisklan"
+               label="BuildPathOptions"
                path="additions"
-               id="r06.menu1">
+               id="r06.menu2">
             <separator
                   name="group1">
             </separator>
          </menu>
+         
          <action
-               label="addRiskPlan"
-               class="r06.popup.actions.AddPlanAction"
-               menubarPath="r06.menu1/group1"
+               label="addToBuildPath"
+               class="r06.popup.actions.AddBuildPathAction"
+               menubarPath="r06.menu2/group1"
                enablesFor="1"
-               id="r06.newAction">
+               id="r06.AddBuildPathAction">
+         </action>
+         <action
+               label="removeFromBuildPath"
+               class="r06.popup.actions.RemoveBuildPathAction"
+               menubarPath="r06.menu2/group1"
+               enablesFor="1"
+               id="r06.removeBuildPathAction">
          </action>
       </objectContribution>
    </extension>
@@ -581,19 +628,45 @@
             objectClass="org.eclipse.core.resources.IFolder"
             id="r06.contribution1">
          <menu
-               label="addRisklan"
+               label="RiskDesignerAddOption"
                path="additions"
                id="r06.menu1">
             <separator
                   name="group1">
             </separator>
          </menu>
+         
+                
          <action
-               label="addRiskPlan"
-               class="r06.popup.actions.AddPlanAction"
+               label="addDrl"
+               class="r06.popup.actions.AddDrlAction"
+               menubarPath="r06.menu1/group1"
+               enablesFor="2"
+               id="r06.addDrlAction">
+         </action>
+         
+         <action
+               label="addCfgFile"
+               class="r06.popup.actions.AddcfgFileAction"
                menubarPath="r06.menu1/group1"
                enablesFor="1"
-               id="r06.newAction">
+               id="r06.addCfgFileAction">
+         </action>
+         
+         <action
+               label="addProperties"
+               class="r06.popup.actions.AddPropertiesAction"
+               menubarPath="r06.menu1/group1"
+               enablesFor="3"
+               id="r06.AddPropertiesAction">
+         </action>
+         
+         <action
+               label="addRiskflow"
+               class="r06.popup.actions.AddRiskflowAction"
+               menubarPath="r06.menu1/group1"
+               enablesFor="4"
+               id="r06.AddRiskflowAction">
          </action>
       </objectContribution>
    </extension>
@@ -603,7 +676,7 @@
             objectClass="org.eclipse.core.resources.IProject"
             id="r06.contribution1">
          <menu
-               label="addRisklan"
+               label="RiskDesignerAddOption"
                path="additions"
                id="r06.menu1">
             <separator
@@ -617,6 +690,14 @@
                enablesFor="1"
                id="r06.newAction">
          </action>
+         <action
+               label="addCfgFile"
+               class="r06.popup.actions.AddcfgFileAction"
+               menubarPath="r06.menu1/group1"
+               enablesFor="1"
+               id="r06.addCfgFileAction">
+         </action>
+         
       </objectContribution>
    </extension>
    
@@ -690,20 +771,34 @@
       </filter>
       <filter
             targetId="org.eclipse.jdt.ui.PackageExplorer"
-            name="Hide A.java (solution)"
+            name="Hide ant (solution)"
             enabled="false"
-            description="Hide A.java (solution)"
-            class="r06.ui.filters.AFileFilter"
+            description="Hide TestAntCommand.java (solution)"
+            class="r06.ui.filters.AntFilter"
             id="r06.ui.PackageExplorer.AFileFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.jdt.ui.PackageExplorer"
+            name="Hide maven (solution)"
+            enabled="false"
+            description="Hide TestMavenCommand.java (solution)"
+            class="r06.ui.filters.MavenFilter"
+            id="r06.ui.PackageExplorer.MavenFilter">
       </filter>
     </extension> 
 	<extension point="org.eclipse.ui.navigator.navigatorContent">      
        <commonFilter
 		        activeByDefault="false"
+		        class="r06.ui.filters.antFilter"
+		        name="Hide ant (solution)"
+		        description="Hide TestAntCommand.java (solution)"
+		        id="r06.ui.filters.AntFilter"/>
+	   <commonFilter
+		        activeByDefault="false"
 		        class="r06.ui.filters.AFileFilter"
-		        name="Hide A.java (solution)"
-		        description="Hide A.java (solution)"
-		        id="r06.ui.filters.AFileFilter"/>
+		        name="Hide ant (solution)"
+		        description="Hide TestMavenCommand.java (solution)"
+		        id="r06.ui.filters.MavenFilter"/>
 	</extension>
 
 

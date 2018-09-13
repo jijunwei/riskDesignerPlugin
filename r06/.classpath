@@ -3,7 +3,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_152"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/jjw8610/Desktop/风控集成环境/EclipsePlugin/icu4j-3.4.4.jar"/>
+	<classpathentry kind="lib" path="D:/desktop/icu4j-3.4.4.jar"/>
 	<classpathentry kind="lib" path="src/util/dom4j-2.1.1.jar"/>
 	<classpathentry kind="lib" path="src/util/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="lib" path="src/util/xmlworker-1.2.1.custom.jar"/>

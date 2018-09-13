@@ -117,7 +117,12 @@ public class NewDrlWizard extends Wizard implements INewWizard {
 		try {
 			InputStream stream = openContentStream(fileName,containerName);
 			if (file.exists()) {
+				/*MessageDialog.openInformation(
+						window.getShell(),
+						"RiskDesigner",
+						"addPlan Action was executed.");*/
 				file.setContents(stream, true, true, monitor);
+				
 			} else {
 				file.create(stream, true, monitor);
 			}
@@ -178,7 +183,7 @@ public class NewDrlWizard extends Wizard implements INewWizard {
 		String ruleGroup=GetString.getPackage(s5);
 		System.out.println("ruleGroup:"+ruleGroup);
 		       StringBuffer buf4 = new StringBuffer();
-			   buf4.append("/**section package  ;**/ {\n");       
+			   buf4.append("/**section package  ;**/ \n");       
 			   buf4.append("package com.xujin."+projectName+";\n");
 		       buf4.append("/**section import  ;**/ \n\n");
 

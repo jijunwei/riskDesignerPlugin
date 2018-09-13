@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -103,16 +104,19 @@ public class MyProjectCreationWizard extends Wizard
        IClasspathEntry[] buildPath = { 
         
                   //JavaCore.newSourceEntry(jproject.getPath().append("java\\src")),
-                  JavaCore.newSourceEntry(jproject.getPath().append("java\\src\\maven")),
-                  JavaCore.newSourceEntry(jproject.getPath().append("java\\src\\ant")),
-                  //JavaCore.newLibraryEntry(jproject.getPath().append("java\\lib"),null,null,false),
-                  JavaCore.newSourceEntry(jproject.getPath().append("java\\lib")),
+                  /*JavaCore.newSourceEntry(jproject.getPath().append("java\\src\\maven")),
+                  JavaCore.newSourceEntry(jproject.getPath().append("java\\src\\ant")),*/
+                  //JavaCore.newSourceEntry(jproject.getPath().append("java\\src\\com.xujin")),
+    		      JavaCore.newSourceEntry(jproject.getPath().append("java\\src")),
+                  JavaCore.newLibraryEntry(jproject.getPath().append("java\\lib"),null,null,false),
+                  //JavaCore.newSourceEntry(jproject.getPath().append("java\\lib")),
                   JavaCore.newSourceEntry(jproject.getPath().append("resources\\dev")),
                   JavaCore.newSourceEntry(jproject.getPath().append("resources\\test")),
                   JavaCore.newSourceEntry(jproject.getPath().append("resources\\pre-product")),
                   JavaCore.newSourceEntry(jproject.getPath().append("resources\\product")),
                   JavaCore.newSourceEntry(jproject.getPath().append("resources\\META-INF")),
-                  JavaCore.newSourceEntry(jproject.getPath().append("plan1\\rules")
+                  JavaCore.newSourceEntry(jproject.getPath().append("plan1\\rules\\a\\b")
+                  
                  ),
                   
                  
@@ -131,9 +135,9 @@ public class MyProjectCreationWizard extends Wizard
              //project.create(null);
              //project.open(null);0
              
-           /* IProjectDescription description = project.getDescription();
+           IProjectDescription description = project.getDescription();
 			description.setNatureIds(new String[] { "org.eclipse.jdt.core.javanature" });
-			project.setDescription(description, null);*/
+			project.setDescription(description, null);
 			
 			/*IClasspathEntry[] cpentry = { 
 					         JavaCore.newSourceEntry(jproject.getPath()), 
@@ -256,12 +260,11 @@ public class MyProjectCreationWizard extends Wizard
         BasicNewProjectResourceWizard.updatePerspective(this.fConfigElement);
         BasicNewResourceWizard.selectAndReveal(project, this.fWorkbench.getActiveWorkbenchWindow());
         
-        final String containerName0 = "/"+projectName+"/java/src/maven";
+        /*final String containerName0 = "/"+projectName+"/java/src/maven";
         final String fileName0 = "TestMavenCommand.java";
         
         final String containerName00 = "/"+projectName+"/java/src/ant";
-        final String fileName00 = "TestDeployCommand.java";
-        
+        final String fileName00 = "TestDeployCommand.java";*/
         
         final String containerName = "/"+projectName+"/resources/META-INF";
         final String fileName = "kmodule.xml";
@@ -272,9 +275,9 @@ public class MyProjectCreationWizard extends Wizard
        
                 
         final String container7="/"+projectName+"/plan1/rules";
-        final String fileName7 = "one.drl";
-        //final String container5="/"+projectName+"/plan1/rules/a/b";
-        //final String fileName5 = "two.drl";
+        final String fileName7 = "demo.drl";
+        final String container5="/"+projectName+"/plan1/rules/a/b";
+        final String fileName5 = "demo2.drl";
         final String container3="/"+projectName+"/plan1";
         final String fileName3 = "risk.flow";
         
@@ -289,8 +292,8 @@ public class MyProjectCreationWizard extends Wizard
         final String fileName8 = "default.cfg";
  		
  	   try{
- 		doFinish(containerName0, fileName0, monitor);
- 		doFinish(containerName00, fileName00, monitor);
+ 		/*doFinish(containerName0, fileName0, monitor);
+ 		doFinish(containerName00, fileName00, monitor);*/
 		doFinish(containerName, fileName, monitor);
 		
 		doFinish(containerName1, fileName2, monitor);
@@ -298,15 +301,19 @@ public class MyProjectCreationWizard extends Wizard
 		
 		doFinish(container3, fileName3, monitor);
 		
-		//doFinish(container5, fileName5, monitor);
+		
 		doFinish(container6, fileName6, monitor);
 		doFinish(container6, fileName9, monitor);
 		doFinish(container6, fileName10, monitor);
 		
 		doFinish(container7, fileName7, monitor);
 		doFinish(container8, fileName8, monitor);
-			
-
+		doFinish(container5, fileName5, monitor);	
+		
+		
+        //add java/lib directory
+		
+      	addsubfolder(monitor,projectName,"java/lib");
         BasicNewProjectResourceWizard.updatePerspective(this.fConfigElement);
         BasicNewResourceWizard.selectAndReveal(project, this.fWorkbench.getActiveWorkbenchWindow());
  	   }catch(Exception e){
@@ -322,7 +329,31 @@ public class MyProjectCreationWizard extends Wizard
         monitor.done();
         }
   }
-
+  public void addsubfolder(IProgressMonitor monitor,String projectName,String subfoldername){
+		
+		//获取工作区根  
+		  
+		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot(); 
+		//从工作区根获得项目实例  
+		IProject project = myWorkspaceRoot.getProject(projectName);
+      
+		//获取文件夹实例  
+		
+		
+		IFolder folder = project.getFolder(subfoldername);  
+	try { 
+		if (!folder.exists()) {
+			
+				folder.create(true, true, monitor);
+		
+		}	
+		
+		
+	} catch (CoreException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+}
   public boolean performFinish()
   {
     WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
@@ -392,7 +423,7 @@ public class MyProjectCreationWizard extends Wizard
 		}
 		private InputStream openContentStream(String fileName) {
 			String contents="";
-			if(fileName.equals("TestMavenCommand.java")){
+			/*if(fileName.equals("TestMavenCommand.java")){
 				StringBuffer buf0=new StringBuffer();
 				   buf0.append("import java.io.File;\nimport java.io.InputStream;\nimport java.io.InputStreamReader;\nimport java.util.Properties;\nimport java.util.logging.Logger;\n");
 			       buf0.append("public class TestMavenCommand {\n");
@@ -445,15 +476,15 @@ public class MyProjectCreationWizard extends Wizard
 			       buf0.append("   }\n");
 			       contents=buf0.toString();
 				
-			}
+			}*/
 			
-			if(fileName.equals("one.drl")){
+			if(fileName.equals("demo.drl")){
 				StringBuffer buf4 = new StringBuffer();
-				   buf4.append("/**section package  ;**/ {\n");       
+				   buf4.append("/**section package  ;**/ \n");       
 					buf4.append("package com.xujin.demo;\n");
 					buf4.append("/**section import  ;**/ \n\n");
 
-			       buf4.append("rule \""+"rules.one"+"\"\n");
+			       buf4.append("rule \""+"rules.demo"+"\"\n");
 			       buf4.append("        salience 1\n");
 			       buf4.append("        no-loop\n");
 			       buf4.append("        lock-on-active true\n");
@@ -463,17 +494,17 @@ public class MyProjectCreationWizard extends Wizard
 				   buf4.append("        end\n\n");
 				   contents=buf4.toString();
 			}
-			if(fileName.equals("two.drl")){
+			if(fileName.equals("demo2.drl")){
 			   StringBuffer buf41 = new StringBuffer();
-			   buf41.append("/**section package  ;**/ {\n");       
+			   buf41.append("/**section package  ;**/ \n");       
 			   buf41.append("package com.xujin.demo;\n");
 		       buf41.append("/**section import  ;**/ \n\n");
 		
-		       buf41.append("rule \""+"a.b"+".two"+"\"\n");
+		       buf41.append("rule \""+"a.b"+".demo2"+"\"\n");
 		       buf41.append("        salience 1\n");
 		       buf41.append("        no-loop\n");
 		       buf41.append("        lock-on-active true\n");
-		       buf41.append("        ruleflow-group \" "+"a.b"+"\"\n");
+		       buf41.append("        ruleflow-group \""+"a.b"+"\"\n");
 		       buf41.append("        when\n\n");
 			   buf41.append("        then\n\n");
 			   buf41.append("        end\n\n");
@@ -497,7 +528,7 @@ public class MyProjectCreationWizard extends Wizard
 					buf2.append("	<copy file=\"${project.build.directory}\\${project.build.finalName}\"\n");   
 					buf2.append("		todir=\"${dest}\\data\" overwrite=\"true\"/>\n");
 					buf2.append("	<copy todir=\"${dest}\\solution\\"+projectName+".sln\\AllPass.plan\">\n");
-					buf2.append("		<fileset dir=\"${project.build.directory}\\classes\\drls\"/>\n");
+					buf2.append("		<fileset dir=\"${project.build.directory}\\classes\\rules\"/>\n");
 					buf2.append("	</copy>\n");
 					buf2.append("	<copy file=\"${project.build.directory}\\classes\\default.cfg\"\n");   
 					buf2.append("		todir=\"${dest}\\solution\\"+projectName+".sln\" overwrite=\"true\"/>\n");
@@ -517,14 +548,16 @@ public class MyProjectCreationWizard extends Wizard
 					contents=buf2.toString();
 			}
 			if(fileName.equals("default.cfg")){
+				 String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 				 StringBuffer buf01 = new StringBuffer();
 			       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			       buf01.append("<Solution isActive=\"true\" name=\""+projectName+"\">\n");
-				   buf01.append("<Plan id=\"1\" name=\"plan1\" isActive=\"true\">\n");
-	       
-				   buf01.append("    <Models>\n");
-				   buf01.append("    <!-- 添加<model>:<Model type=\"out\" id=\"*\"/> -->\n");
-				   buf01.append("    <!-- 添加<model>:<Model type=\"in\" id=\"*\"/> -->\n");
+				   buf01.append("<Plan id=\""+uuid+"\" name=\"plan1\" isActive=\"true\">\n");
+	       		   buf01.append("    <Models>\n");
+				   buf01.append("      <!-- 添加一个 out model -->\n");
+				   buf01.append("      <Model type=\"out\" id=\"*\"/>\n");
+				   buf01.append("      <!-- 添加一个或多个in model-->\n");
+				   buf01.append("      <Model type=\"in\" id=\"*\"/>\n");
 			       buf01.append("    </Models>\n");
 			       buf01.append("    </Plan>\n");
 			       buf01.append("</Solution>\n");
@@ -534,15 +567,12 @@ public class MyProjectCreationWizard extends Wizard
 				
 				   StringBuffer buf01 = new StringBuffer();
 			       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-			       buf01.append("<Solution isActive=\"true\" name=\""+projectName+"\">\n");
-				   buf01.append("<Plan id=\"1\" name=\"plan1\" isActive=\"true\">\n");
-	       
-				   buf01.append("    <Models>\n");
-				   buf01.append("    <!-- 添加<model>:<Model type=\"out\" id=\"*\"/> -->\n");
-				   buf01.append("    <!-- 添加<model>:<Model type=\"in\" id=\"*\"/> -->\n");
-			       buf01.append("    </Models>\n");
-			       buf01.append("    </Plan>\n");
-			       buf01.append("</Solution>\n");
+			       buf01.append("<kmodule xmlns=\"http://jboss.org/kie/6.0.0/kmodule\">\n");
+				   buf01.append("    <kbase name=\""+projectName+"-"+"plan1"+"\" packages=\"rules\">\n");       
+				   buf01.append("       <ksession name=\"ksession-"+projectName+"-plan1"+"\"/>\n");
+				   buf01.append("    </kbase>\n");
+				   buf01.append("</kmodule>\n");
+			       
 			       contents=buf01.toString();
 			}
 			if(fileName.equals("risk.flow")){
@@ -654,31 +684,31 @@ public class MyProjectCreationWizard extends Wizard
 					buf1.append("         </configuration>\n");
 					buf1.append("      </execution>\n");
 					buf1.append("   </executions>\n");
-					buf1.append("</plugin> ");
-					buf1.append("<plugin>");
-					buf1.append("   <groupId>org.apache.maven.plugins</groupId>");
-					buf1.append("   <artifactId>maven-shade-plugin</artifactId>");
-					buf1.append("   <version>2.4.1</version>");
-					buf1.append("   <executions>");
-					buf1.append("      <execution>");
-					buf1.append("         <phase>package</phase>");
-					buf1.append("      <goals>");
-					buf1.append("         <goal>shade</goal>");
-					buf1.append("      </goals>");
-					buf1.append("   <configuration>");
-					buf1.append("      <transformers>");
-					buf1.append("         <transformer implementation=\"org.apache.maven.plugins.shade.resource.ManifestResourceTransformer\">");
-					buf1.append("         </transformer>");
-					buf1.append("      </transformers>");
-					buf1.append("   </configuration>");
-					buf1.append("      </execution>");
-					buf1.append("   </executions>");
-					buf1.append("</plugin>");
+					buf1.append("</plugin> \n");
+					buf1.append("<plugin>\n");
+					buf1.append("   <groupId>org.apache.maven.plugins</groupId>\n");
+					buf1.append("   <artifactId>maven-shade-plugin</artifactId>\n");
+					buf1.append("   <version>2.4.1</version>\n");
+					buf1.append("   <executions>\n");
+					buf1.append("      <execution>\n");
+					buf1.append("         <phase>package</phase>\n");
+					buf1.append("      <goals>\n");
+					buf1.append("         <goal>shade</goal>\n");
+					buf1.append("      </goals>\n");
+					buf1.append("   <configuration>\n");
+					buf1.append("      <transformers>\n");
+					buf1.append("         <transformer implementation=\"org.apache.maven.plugins.shade.resource.ManifestResourceTransformer\">\n");
+					buf1.append("         </transformer>\n");
+					buf1.append("      </transformers>\n");
+					buf1.append("   </configuration>\n");
+					buf1.append("      </execution>\n");
+					buf1.append("   </executions>\n");
+					buf1.append("</plugin>\n");
 				    buf1.append("</plugins>\n");
 									
 	                buf1.append("<resources>\n");
-					buf1.append("<resource>\n<directory>plan1/</directory>\n<includes>\n<include>**/*.flow</include>\n</includes>\n<targetPath>drls</targetPath>\n<filtering>false</filtering>\n</resource>\n");
-					buf1.append("<!-- 将规则文件文件打包进jar包 -->\n<resource>\n<directory>plan1/rules</directory>\n<targetPath>drls</targetPath>\n<filtering>false</filtering>\n</resource>\n");
+					buf1.append("<resource>\n<directory>plan1/</directory>\n<includes>\n<include>**/*.flow</include>\n</includes>\n<targetPath>rules</targetPath>\n<filtering>false</filtering>\n</resource>\n");
+					buf1.append("<!-- 将规则文件文件打包进jar包 -->\n<resource>\n<directory>plan1/rules</directory>\n<targetPath>rules</targetPath>\n<filtering>false</filtering>\n</resource>\n");
 					buf1.append("<!-- 将kmodule.xml文件打包进jar包 -->\n<resource>\n<directory>resources/META-INF</directory>\n<targetPath>META-INF</targetPath>\n<filtering>false</filtering>\n</resource>\n");
 					buf1.append("<resource>\n<directory>resources/</directory>\n<includes>\n<include>**/*.cfg</include>\n</includes>\n<filtering>false</filtering>\n</resource>\n");
 					buf1.append("<!-- 将application.properties文件打包进jar包的properties文件夹 -->\n<resource>\n<directory>resources/${package.environment}</directory>\n<includes>\n<include>**/*</include>\n</includes>\n<filtering>false</filtering>\n</resource>\n");

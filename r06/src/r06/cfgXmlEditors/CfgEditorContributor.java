@@ -83,16 +83,16 @@ public class CfgEditorContributor extends MultiPageEditorActionBarContributor {
 	private void createActions() {
 		sampleAction = new Action() {
 			public void run() {
-				MessageDialog.openInformation(null, "RiskDesigner01", "Sample Action Executed");
+				MessageDialog.openInformation(null, "RiskDesigner06", "cfgEditor Action Executed");
 			}
 		};
-		sampleAction.setText("Sample Action");
-		sampleAction.setToolTipText("Sample Action tool tip");
+		sampleAction.setText("cfgeditor Action");
+		sampleAction.setToolTipText("cfgeditor Action tool tip");
 		sampleAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(IDE.SharedImages.IMG_OBJS_TASK_TSK));
 	}
 	public void contributeToMenu(IMenuManager manager) {
-		IMenuManager menu = new MenuManager("Editor &Menu");
+		IMenuManager menu = new MenuManager("CFGEditor");
 		manager.prependToGroup(IWorkbenchActionConstants.MB_ADDITIONS, menu);
 		menu.add(sampleAction);
 	}

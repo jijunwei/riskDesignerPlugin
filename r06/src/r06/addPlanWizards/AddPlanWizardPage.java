@@ -1,6 +1,7 @@
 package r06.addPlanWizards;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -52,35 +53,45 @@ public class AddPlanWizardPage extends WizardPage {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
-		layout.numColumns = 3;
+		layout.numColumns = 2;
 		layout.verticalSpacing = 9;
 		Label label = new Label(container, SWT.NULL);
-		label.setText("&Container:");
+		label.setText("&Project Root Directory:");
 
 		containerText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		containerText.setLayoutData(gd);
-		containerText.addModifyListener(new ModifyListener() {
+		containerText.setEnabled(false);
+	/*	containerText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
 			}
-		});		
+		});*/
+
+		
+		label = new Label(container, SWT.NULL);
+		label.setText("&please input a planName:");
+
+		fileText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fileText.setLayoutData(gd);
+		fileText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				dialogChanged();
+			}
+		});
 		
 		initialize();
 		dialogChanged();
 		setControl(container);
 	}
 
-	/**
-	 * Tests if the current workbench selection is a suitable container to use.
-	 */
-
 	private void initialize() {
 		if (selection != null && selection.isEmpty() == false
 				&& selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel.size() > 1)
-				return;
+			/*if (ssel.size() > 1)
+				return;*/
 			Object obj = ssel.getFirstElement();
 			if (obj instanceof IResource) {
 				IContainer container;
@@ -91,25 +102,10 @@ public class AddPlanWizardPage extends WizardPage {
 				containerText.setText(container.getFullPath().toString());
 			}
 		}
-		fileText.setText("*.properties");
+		fileText.setText("");
 	}
-
-	/**
-	 * Uses the standard container selection dialog to choose the new value for
-	 * the container field.
-	 */
-
-	private void handleBrowse() {
-		ContainerSelectionDialog dialog = new ContainerSelectionDialog(
-				getShell(), ResourcesPlugin.getWorkspace().getRoot(), false,
-				"Select new file container");
-		if (dialog.open() == ContainerSelectionDialog.OK) {
-			Object[] result = dialog.getResult();
-			if (result.length == 1) {
-				containerText.setText(((Path) result[0]).toString());
-			}
-		}
-	}
+	
+	
 
 	/**
 	 * Ensures that both text fields are set.
@@ -118,14 +114,20 @@ public class AddPlanWizardPage extends WizardPage {
 	private void dialogChanged() {
 		IResource container = ResourcesPlugin.getWorkspace().getRoot()
 				.findMember(new Path(getContainerName()));
-		
-
-		if (getContainerName().length() == 0) {
-			updateStatus("plan name must be specified");
+		String fileName=fileText.getText();
+		if(fileName.equals("")){
+			updateStatus("Plan name must be inputed");
 			return;
 		}
+		final IFile file = ((IContainer) container).getFile(new Path(fileName));
+		if (file.exists()) {
+				
+				System.out.println("planName  exists:"+(container.toString()+"/")+fileName);
+				updateStatus("planName exists,please input a new Planname");
+				return;
+			}
 		
-		if (!container.isAccessible()) {
+	if (!container.isAccessible()) {
 			updateStatus("Project must be writable");
 			return;
 		}

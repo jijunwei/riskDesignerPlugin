@@ -59,7 +59,7 @@ public class FileUtils {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
-                    fileContent += line;
+                    fileContent += line+"\n";
                 }
                 read.close();
             }

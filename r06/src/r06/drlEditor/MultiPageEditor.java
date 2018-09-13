@@ -97,7 +97,7 @@ public class MultiPageEditor extends MultiPageEditorPart implements IResourceCha
 		Composite composite = new Composite(getContainer(), SWT.NONE);
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
-		layout.numColumns = 2;
+		layout.numColumns = 5;
 		
 		Group group1 = new Group(composite, SWT.SHADOW_ETCHED_OUT);
 		group1.setLayout(layout);
@@ -112,10 +112,7 @@ public class MultiPageEditor extends MultiPageEditorPart implements IResourceCha
         final Text oldTextrow1 = new Text(group1, SWT.READ_ONLY);
         oldText1.setVisible(false);
         oldTextrow1.setVisible(false);
-        final Text oldText2 = new Text(group1, SWT.READ_ONLY);
-        final Text oldTextrow2 = new Text(group1, SWT.READ_ONLY);
-        oldText2.setVisible(false);
-        oldTextrow2.setVisible(false);
+        
         //hintText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));  
         // 为text组件加入文本修改事件监听器 
         //salience 作用是用来设置规则执行的优先级，salience 属性的值是一个数字，数字越大执行优先级越高，同时它的值可以是一个负数。默认情况下，规则的 salience 默认值为 0，所以如果我们不手动设置规则的 salience 属性，那么它的执行顺序是随机的。
@@ -141,7 +138,10 @@ public class MultiPageEditor extends MultiPageEditorPart implements IResourceCha
         
         Label lockOnActive =new Label(group1, SWT.LEFT);
         lockOnActive.setText("lock-on-active");
-        
+        final Text oldText2 = new Text(group1, SWT.READ_ONLY);
+        final Text oldTextrow2 = new Text(group1, SWT.READ_ONLY);
+        oldText2.setVisible(false);
+        oldTextrow2.setVisible(false);
         final Combo combo = new Combo(group1, SWT.SIMPLE);
         String[] items = new String[2];
        /* for (int i = 0; i < items.length; i++)
@@ -238,19 +238,24 @@ public class MultiPageEditor extends MultiPageEditorPart implements IResourceCha
 				if(!oldSalienceValue.equals(newsalienceValue)){
 		    	String newSalienceRow=oldSalienceRow.replace(oldSalienceValue, newsalienceValue);
 		    	editorText=editorText.replace(oldSalienceRow, newSalienceRow);
+		    	oldText1.setText(newsalienceValue);
+		    	oldTextrow1.setText(newSalienceRow);
+		    	
 				}
 		    	String newlockOnActiveValue=combo.getText();
 		    	String oldLockOnActiveValue=oldText2.getText();
 		    	if(!oldLockOnActiveValue.equals(newlockOnActiveValue)){
 		    	String newLockOnActiveRow=oldLockOnActiveRow.replace(oldLockOnActiveValue, newlockOnActiveValue);
 		    	editorText=editorText.replace(oldLockOnActiveRow, newLockOnActiveRow);
+		    	oldText2.setText(newlockOnActiveValue);
+		    	oldTextrow2.setText(newLockOnActiveRow);
 		    	}
 		    	System.out.println("new Contents:\n"+editorText);
 		    	
 				//SWT有不同类型的对话框。有些对话框具有特殊的属性。
 				MessageBox messageBox = 
 				  new MessageBox(getSite().getShell(), SWT.OK| 
-						    SWT.CANCEL| 
+						    
 						    SWT.ICON_WARNING); 
 				
 				
@@ -258,6 +263,7 @@ public class MultiPageEditor extends MultiPageEditorPart implements IResourceCha
 				if (messageBox.open() == SWT.OK) 
 				{ 
 				  System.out.println("Ok is pressed."); 
+				  //doSave(monitor);
 				}
 				editor.getDocumentProvider().getDocument(editor.getEditorInput()).set(editorText);
 				

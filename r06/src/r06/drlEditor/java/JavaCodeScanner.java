@@ -39,6 +39,7 @@ public class JavaCodeScanner extends RuleBasedScanner {
 
 	private static String[] fgConstants= { "false", "null", "true" }; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 
+	private static String[] fgmarker= { "=", "#" }; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 	/**
 	 * Creates a Java code scanner with the given color provider.
 	 *
@@ -51,7 +52,9 @@ public class JavaCodeScanner extends RuleBasedScanner {
 		IToken string= new Token(new TextAttribute(provider.getColor(JavaColorProvider.STRING)));
 		IToken comment= new Token(new TextAttribute(provider.getColor(JavaColorProvider.SINGLE_LINE_COMMENT)));
 		IToken other= new Token(new TextAttribute(provider.getColor(JavaColorProvider.DEFAULT)));
-
+        
+		IToken marker= new Token(new TextAttribute(provider.getColor(JavaColorProvider.CONSTANTS)));
+		
 		List rules= new ArrayList();
 
 		// Add rule for single line comments.
@@ -72,6 +75,8 @@ public class JavaCodeScanner extends RuleBasedScanner {
 			wordRule.addWord(fgTypes[i], type);
 		for (int i= 0; i < fgConstants.length; i++)
 			wordRule.addWord(fgConstants[i], type);
+		for (int i= 0; i < fgmarker.length; i++)
+			wordRule.addWord(fgmarker[i], marker);
 		rules.add(wordRule);
 
 		IRule[] result= new IRule[rules.size()];
