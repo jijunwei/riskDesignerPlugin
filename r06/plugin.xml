@@ -25,6 +25,17 @@
             id="r06.riskFlowEditors.MultiPageEditor">
       </editor>
    </extension>
+   <!--<extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="cfg Editor"
+            extensions="cfg"
+            icon="icons/sample.gif"
+            contributorClass="r06.cfgXmlEditors.CfgEditorContributor"
+            class="r06.cfgXmlEditors.CFGEditor"
+            id="r06.cfgXmlEditors.CFGEditor">
+      </editor>
+   </extension>-->
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -32,8 +43,8 @@
             extensions="cfg"
             icon="icons/sample.gif"
             contributorClass="r06.cfgXmlEditors.MultiPageEditorContributor"
-            class="r06.cfgXmlEditors.CFGEditor"
-            id="r06.cfgXmlEditors.CfgEditor">
+            class="r06.cfgXmlEditors.MultiPageEditor"
+            id="r06.cfgXmlEditors.MultiPageEditor">
       </editor>
    </extension>
    <extension
@@ -520,7 +531,7 @@
 		<description>New solution Project (xujin FinTech)</description>
     </wizard>
     <wizard
-		id="r06.addPlanWizards"
+		id="r06.addPlanWizards.AddPlanWizard"
 		name="add a new plan"
 		class="r06.addPlanWizards.AddPlanWizard"
 		category="r06"
@@ -626,6 +637,36 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             objectClass="org.eclipse.core.resources.IFolder"
+            id="r06.contribution2">
+         <menu
+               label="PlanSetOptions"
+               path="additions"
+               id="r06.menu3">
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
+         
+         <action
+               label="SetPersentPlanActive"
+               class="r06.popup.actions.SetPresentPlanActiveAction"
+               menubarPath="r06.menu3/group1"
+               enablesFor="1"
+               id="r06.SetPersentPlanActive">
+         </action>
+         <action
+               label="removePlan"
+               class="r06.popup.actions.RemovePlanAction"
+               menubarPath="r06.menu3/group1"
+               enablesFor="1"
+               id="r06.removePlanAction">
+         </action>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFolder"
             id="r06.contribution1">
          <menu
                label="RiskDesignerAddOption"
@@ -641,7 +682,7 @@
                label="addDrl"
                class="r06.popup.actions.AddDrlAction"
                menubarPath="r06.menu1/group1"
-               enablesFor="2"
+               enablesFor="1"
                id="r06.addDrlAction">
          </action>
          
@@ -657,7 +698,7 @@
                label="addProperties"
                class="r06.popup.actions.AddPropertiesAction"
                menubarPath="r06.menu1/group1"
-               enablesFor="3"
+               enablesFor="1"
                id="r06.AddPropertiesAction">
          </action>
          
@@ -665,7 +706,7 @@
                label="addRiskflow"
                class="r06.popup.actions.AddRiskflowAction"
                menubarPath="r06.menu1/group1"
-               enablesFor="4"
+               enablesFor="1"
                id="r06.AddRiskflowAction">
          </action>
       </objectContribution>
@@ -688,7 +729,7 @@
                class="r06.popup.actions.AddPlanAction"
                menubarPath="r06.menu1/group1"
                enablesFor="1"
-               id="r06.newAction">
+               id="r06.AddPlanAction">
          </action>
          <action
                label="addCfgFile"

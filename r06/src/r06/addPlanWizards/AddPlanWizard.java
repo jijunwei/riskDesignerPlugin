@@ -1,36 +1,44 @@
 package r06.addPlanWizards;
 
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.operation.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
-import java.util.Properties;
 import java.util.UUID;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.core.resources.*;
-
-import java.io.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
-import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 import r06.Activator;
 import util.FileUtils;
-import util.GetString;
+import util.ProjectUtil;
 
 /**
  * This is a sample new wizard. Its role is to create a new file 
@@ -151,7 +159,7 @@ public class AddPlanWizard extends Wizard implements INewWizard {
 			        
 			        addAndModifyCfgFile(projectName,planName);
 					//doFinish(containerName, planName, monitor);
-					
+			        
 				} catch (CoreException e) {
 					
 					   e.printStackTrace();
@@ -207,12 +215,14 @@ public class AddPlanWizard extends Wizard implements INewWizard {
 					 content=content.replace("</Solution>", buf01.toString());
 					 System.out.println(content);
 					 FileUtils.writeFile(filePath,content);
-					 BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
+					 //BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
+					 
+					 ProjectUtil.refresh("project",null,projectName);
 					/* IEditorPart[] parts = 
 							 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getEditors();*/
 					 	 
 					 
-					 IWorkbenchPage[] pages = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getPages();
+					/* IWorkbenchPage[] pages = Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getPages();
 					 for(int i=0;i<pages.length;i++){
 						 String title=pages[i].getActiveEditor().getTitle();
 					 if(title.equals("default.cfg")){
@@ -221,14 +231,21 @@ public class AddPlanWizard extends Wizard implements INewWizard {
 					 }
 					
 						
-					 }
+					 }*/
 					 
 					 }catch(Exception e){
 						 System.out.println(e.getMessage());
 						 
 					 }
-				 
-				 
+				 //ProjectUtil.updatePerspective(project);
+				 /*IFile f = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(filePath));
+				try {
+					f.refreshLocal(IResource.DEPTH_ZERO, null);
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}*/
+				 ProjectUtil.refresh("project",null,projectName);
 				 
 			}
 			

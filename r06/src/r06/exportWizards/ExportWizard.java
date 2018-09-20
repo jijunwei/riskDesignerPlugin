@@ -10,10 +10,21 @@
  *******************************************************************************/
 package r06.exportWizards;
 
+import java.io.IOException;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+
+import util.FileUtils;
+import util.ProjectUtil;
 
 public class ExportWizard extends Wizard implements IExportWizard {
 	
@@ -27,6 +38,58 @@ public class ExportWizard extends Wizard implements IExportWizard {
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
 	public boolean performFinish() {
+		MessageDialog.openInformation(
+				getShell(),
+				"RiskDesigner",
+				"waiting......"); 
+        
+		IStructuredSelection currentResourceSelection=this.mainPage.currentResourceSelection;
+		 String projectName=""; 
+			if (currentResourceSelection != null && currentResourceSelection.isEmpty() == false
+			&& currentResourceSelection instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) currentResourceSelection;
+			
+			Object obj = ssel.getFirstElement();
+			if (obj instanceof IResource) {
+			IContainer container;
+			if (obj instanceof IContainer)
+				container = (IContainer) obj;
+			else
+				container = ((IResource) obj).getParent();
+			projectName=container.getFullPath().toString().substring(1);
+			}
+			}
+			//获取工作区根  
+			
+			IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot(); 
+			//从工作区根获得项目实例  
+			IProject project = myWorkspaceRoot.getProject(projectName);
+			
+			//为正确获取方式
+			String filePath=project.getLocation().toString()+"/build.xml";
+			
+			String content=FileUtils.readFile(filePath);
+			String selecteddir=this.mainPage.selecteddir;
+			System.out.println(selecteddir);
+			String destdir=ProjectUtil.getDestDir(filePath,"property","dest");
+			String newContent=content.replace(destdir, selecteddir);
+			try {
+			FileUtils.writeFile(filePath, newContent);
+			} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
+			ProjectUtil.refresh("project",null,projectName);
+            ProjectUtil.buildProject(project,getShell(),false);
+            ProjectUtil.refresh("project",null,projectName);
+             
+            ProjectUtil.deployProject(project,getShell(),false);
+            MessageDialog.openInformation(
+            		getShell(),
+    				"RiskDesigner",
+    				"execute end"); 
+       
+		
 		
         return true;
 	}
@@ -38,6 +101,7 @@ public class ExportWizard extends Wizard implements IExportWizard {
 		setWindowTitle("solution export Wizard"); //NON-NLS-1
 		setNeedsProgressMonitor(true);
 		mainPage = new ExportWizardPage("Export present solution",selection); //NON-NLS-1
+		
 	}
 	
 	/* (non-Javadoc)

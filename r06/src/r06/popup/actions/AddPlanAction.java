@@ -4,6 +4,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -11,6 +12,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
+@SuppressWarnings("restriction")
 public class AddPlanAction implements IObjectActionDelegate {
 
 	private Shell shell;
@@ -32,12 +34,8 @@ public class AddPlanAction implements IObjectActionDelegate {
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
-	@SuppressWarnings("restriction")
 	public void run(IAction action) {
-		/*MessageDialog.openInformation(
-			shell,
-			"RiskDesigner",
-			"addPlan Action was executed.");*/
+		
 		IWizardDescriptor wizardDesc = WorkbenchPlugin.getDefault()
 				.getNewWizardRegistry().findWizard("r06.addPlanWizards.AddPlanWizard"); 
 		if (wizardDesc != null) {
@@ -46,6 +44,10 @@ public class AddPlanAction implements IObjectActionDelegate {
 					wizardDesc);
 			shortcutAction.run();
 		}
+		/*MessageDialog.openInformation(
+				shell,
+				"RiskDesigner",
+				"addPlan Action was executed.");*/
 		
 	}
 

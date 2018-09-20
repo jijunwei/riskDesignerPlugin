@@ -7,6 +7,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.core.resources.*;
@@ -14,6 +16,8 @@ import org.eclipse.core.runtime.CoreException;
 import java.io.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
+
+import util.ProjectUtil;
 
 /**
  * This is a sample new wizard. Its role is to create a new file 
@@ -29,13 +33,15 @@ import org.eclipse.ui.ide.IDE;
 public class NewCfgWizard extends Wizard implements INewWizard {
 	private NewCfgWizardPage page;
 	private ISelection selection;
-
+	public String projectName; 
 	/**
 	 * Constructor for SampleNewWizard.
 	 */
 	public NewCfgWizard() {
 		super();
 		setNeedsProgressMonitor(true);
+		IProject project=ProjectUtil.getCurrentProject();
+		this.projectName=project.getName();
 	}
 	
 	/**
@@ -99,7 +105,7 @@ public class NewCfgWizard extends Wizard implements INewWizard {
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fileName));
 		try {
-			InputStream stream = openContentStream();
+			InputStream stream = openContentStream(fileName);
 			if (file.exists()) {
 				file.setContents(stream, true, true, monitor);
 			} else {
@@ -127,11 +133,25 @@ public class NewCfgWizard extends Wizard implements INewWizard {
 	 * We will initialize file contents with a sample text.
 	 */
 
-	private InputStream openContentStream() {
+	private InputStream openContentStream(String fileName) {
+		StringBuffer buf01 = new StringBuffer();
+		if(fileName.equals("default.cfg")){
+			 String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+			 
+		       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n");
+		       buf01.append("<Solution isActive=\"true\" name=\""+projectName+"\">\n");
+			   buf01.append("<Plan id=\""+uuid+"\" name=\"plan1\" isActive=\"true\">\n");
+      		   buf01.append("    <Models>\n");
+			   buf01.append("      <!-- 添加一个 out model -->\n");
+			   buf01.append("      <Model type=\"out\" id=\"*\"/>\n");
+			   buf01.append("      <!-- 添加一个或多个in model-->\n");
+			   buf01.append("      <Model type=\"in\" id=\"*\"/>\n");
+		       buf01.append("    </Models>\n");
+		       buf01.append("    </Plan>\n");
+		       buf01.append("</Solution>\n");
+			}
 		
-		String contents =
-			"This is the initial file contents for default.cfg file that should be word-sorted in the Preview page of the multi-page editor";
-		return new ByteArrayInputStream(contents.getBytes());
+		return new ByteArrayInputStream(buf01.toString().getBytes());
 	}
 
 	private void throwCoreException(String message) throws CoreException {

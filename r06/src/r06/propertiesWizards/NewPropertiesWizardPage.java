@@ -163,7 +163,7 @@ public class NewPropertiesWizardPage extends WizardPage {
 		final IFile file = ((IContainer) container).getFile(new Path(fileName));
 		if (file.exists()) {
 				
-				System.out.println("file if exists:"+(container.toString()+"/")+fileName);
+				System.out.println("file exists:"+(container.toString()+"/")+fileName);
 				updateStatus("File exists,please input a new filename");
 				return;
 			}

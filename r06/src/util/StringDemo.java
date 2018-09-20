@@ -149,12 +149,17 @@ public class StringDemo {
     */
 	
 	
-	
-	
+	String s1=getProjectName("C:\\Users\\jjw8610\\runtime-EclipseApplication\\2018091402");
+	System.out.println(s1);
 	
 	
 	
 
     
+  }
+  
+  public static String getProjectName(String projectPath){
+  	String projectName=projectPath.substring(projectPath.lastIndexOf("\\")+1);
+      return projectName;
   }
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -58,14 +59,21 @@ public class AddBuildPathAction implements IObjectActionDelegate {
 		
 		
 	    
-	    System.out.println(project.getLocation().toString());
+	    System.out.println("location:"+project.getLocation().toString());
 	    
-		
+		String projectPath=project.getLocation().toString();
+		String projectName=ProjectUtil.getProjectName(projectPath);
 	    //为正确获取方式
-		String filePath=project.getLocation().toString()+".classpath";
+		String filePath=projectPath+"/.classpath";
 		String status = null;
 		try {
-			status=ProjectUtil.addToBuildpath(filePath, ProjectUtil.getCurrentFile().getName());
+			
+			
+			String fileName=ProjectUtil.getCurrentFile();
+			status=ProjectUtil.addToBuildpath(filePath, fileName);
+			//ProjectUtil.updatePerspective(project);
+			//ProjectUtil.refreshFile(project.getLocation().toString()+"java/lib/"+fileName);
+			ProjectUtil.refresh("project",null,projectName);
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -74,7 +82,7 @@ public class AddBuildPathAction implements IObjectActionDelegate {
 			MessageDialog.openInformation(
 					shell,
 					"RiskDesigner",
-					"AddBuildPath Action was executed.");
+					"AddBuildPath ok");
 		}
 		else{
 			MessageDialog.openInformation(

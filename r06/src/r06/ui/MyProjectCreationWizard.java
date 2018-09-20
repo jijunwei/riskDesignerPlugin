@@ -3,9 +3,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -26,15 +26,11 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.wizards.JavaCapabilityConfigurationPage;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
@@ -43,10 +39,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+import org.xml.sax.SAXException;
+
+import util.ProjectUtil;
 
 public class MyProjectCreationWizard extends Wizard
   implements IExecutableExtension, INewWizard
@@ -106,8 +105,8 @@ public class MyProjectCreationWizard extends Wizard
                   //JavaCore.newSourceEntry(jproject.getPath().append("java\\src")),
                   /*JavaCore.newSourceEntry(jproject.getPath().append("java\\src\\maven")),
                   JavaCore.newSourceEntry(jproject.getPath().append("java\\src\\ant")),*/
-                  //JavaCore.newSourceEntry(jproject.getPath().append("java\\src\\com.xujin")),
-    		      JavaCore.newSourceEntry(jproject.getPath().append("java\\src")),
+                  JavaCore.newSourceEntry(jproject.getPath().append("java\\src\\com.xujin")),
+    		      //JavaCore.newSourceEntry(jproject.getPath().append("java\\src")),
                   JavaCore.newLibraryEntry(jproject.getPath().append("java\\lib"),null,null,false),
                   //JavaCore.newSourceEntry(jproject.getPath().append("java\\lib")),
                   JavaCore.newSourceEntry(jproject.getPath().append("resources\\dev")),
@@ -314,6 +313,28 @@ public class MyProjectCreationWizard extends Wizard
         //add java/lib directory
 		
       	addsubfolder(monitor,projectName,"java/lib");
+      //为正确获取方式
+      		String filePath=project.getLocation().toString()+"/.classpath";
+      		try {
+      			     			
+      			ProjectUtil.addToBuildpath(filePath, "unit");
+      			
+      		} catch (ParserConfigurationException | SAXException | IOException e) {
+      			// TODO Auto-generated catch block
+      			e.printStackTrace();
+      		}
+	      	try {
+		     			
+	      		ProjectUtil.addToBuildpath(filePath, "maven");
+		
+			} catch (ParserConfigurationException | SAXException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			/*IFile f = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(filePath));
+			f.refreshLocal(IResource.DEPTH_ZERO, null);  */	
+	      	ProjectUtil.refresh("project",null,projectName);
         BasicNewProjectResourceWizard.updatePerspective(this.fConfigElement);
         BasicNewResourceWizard.selectAndReveal(project, this.fWorkbench.getActiveWorkbenchWindow());
  	   }catch(Exception e){
@@ -402,6 +423,7 @@ public class MyProjectCreationWizard extends Wizard
 			stream.close();
 		} catch (IOException e) {
 		}
+		if(fMainPage.checked){
 		monitor.worked(1);
 		monitor.setTaskName("Opening file for editing...");
 		getShell().getDisplay().asyncExec(new Runnable() {
@@ -415,6 +437,7 @@ public class MyProjectCreationWizard extends Wizard
 			}
 		});
 		monitor.worked(1);
+		}
 	}
 		private void throwCoreException(String message) throws CoreException {
 			IStatus status =
@@ -550,7 +573,7 @@ public class MyProjectCreationWizard extends Wizard
 			if(fileName.equals("default.cfg")){
 				 String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 				 StringBuffer buf01 = new StringBuffer();
-			       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n");
 			       buf01.append("<Solution isActive=\"true\" name=\""+projectName+"\">\n");
 				   buf01.append("<Plan id=\""+uuid+"\" name=\"plan1\" isActive=\"true\">\n");
 	       		   buf01.append("    <Models>\n");
@@ -568,8 +591,8 @@ public class MyProjectCreationWizard extends Wizard
 				   StringBuffer buf01 = new StringBuffer();
 			       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			       buf01.append("<kmodule xmlns=\"http://jboss.org/kie/6.0.0/kmodule\">\n");
-				   buf01.append("    <kbase name=\""+projectName+"-"+"plan1"+"\" packages=\"rules\">\n");       
-				   buf01.append("       <ksession name=\"ksession-"+projectName+"-plan1"+"\"/>\n");
+				   buf01.append("    <kbase name=\""+projectName+"-"+"plan"+"\" packages=\"rules\">\n");       
+				   buf01.append("       <ksession name=\"ksession-"+projectName+"-plan"+"\"/>\n");
 				   buf01.append("    </kbase>\n");
 				   buf01.append("</kmodule>\n");
 			       

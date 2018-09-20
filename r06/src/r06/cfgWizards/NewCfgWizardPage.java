@@ -1,6 +1,7 @@
 package r06.cfgWizards;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -159,6 +160,13 @@ public class NewCfgWizardPage extends WizardPage {
 			updateStatus("File name must be valid");
 			return;
 		}
+		final IFile file = ((IContainer) container).getFile(new Path(fileName));
+		if (file.exists()) {
+				
+				System.out.println("file exists:"+(container.toString()+"/")+fileName);
+				updateStatus("File exists,please input a new filename");
+				return;
+			}
 		int dotLoc = fileName.lastIndexOf('.');
 		if (dotLoc != -1) {
 			String ext = fileName.substring(dotLoc + 1);
