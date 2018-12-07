@@ -23,7 +23,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
-import util.FileUtils;
+import util.FileUtilsByUs;
 import util.ProjectUtil;
 
 public class ExportWizard extends Wizard implements IExportWizard {
@@ -68,13 +68,13 @@ public class ExportWizard extends Wizard implements IExportWizard {
 			//为正确获取方式
 			String filePath=project.getLocation().toString()+"/build.xml";
 			
-			String content=FileUtils.readFile(filePath);
+			String content=FileUtilsByUs.readFile(filePath);
 			String selecteddir=this.mainPage.selecteddir;
 			System.out.println(selecteddir);
 			String destdir=ProjectUtil.getDestDir(filePath,"property","dest");
 			String newContent=content.replace(destdir, selecteddir);
 			try {
-			FileUtils.writeFile(filePath, newContent);
+			FileUtilsByUs.writeFile(filePath, newContent);
 			} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

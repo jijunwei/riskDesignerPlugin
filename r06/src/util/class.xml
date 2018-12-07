@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><students>
+<xuesheng sex="nv"> 
+   <mingzi>xiaohai</mingzi> 
+    <sex>nv</sex>  
+    <nianling>24</nianling>  
+    <jieshao>jieshao:</jieshao>  
+   
+ 
+</xuesheng>
+
+<xuesheng> 
+  <mingzi>xiaoming </mingzi> 
+    <sex>nv</sex>  
+    <nianling>24</nianling>  
+    <jieshao>jieshao:</jieshao>  
+</xuesheng>
+</students>

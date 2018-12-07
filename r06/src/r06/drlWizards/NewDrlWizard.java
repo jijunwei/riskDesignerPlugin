@@ -26,7 +26,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.Workbench;
 
-import util.FileUtils;
+import util.FileUtilsByUs;
 import util.GetString;
 import util.JsonUtil;
 import util.XmlJSON;

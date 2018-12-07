@@ -71,9 +71,9 @@ public class AddBuildPathAction implements IObjectActionDelegate {
 			
 			String fileName=ProjectUtil.getCurrentFile();
 			status=ProjectUtil.addToBuildpath(filePath, fileName);
-			//ProjectUtil.updatePerspective(project);
-			//ProjectUtil.refreshFile(project.getLocation().toString()+"java/lib/"+fileName);
-			ProjectUtil.refresh("project",null,projectName);
+			ProjectUtil.updatePerspective(project);
+			ProjectUtil.refreshFile(project.getLocation().toString()+"java/lib/"+fileName);
+			
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -83,6 +83,7 @@ public class AddBuildPathAction implements IObjectActionDelegate {
 					shell,
 					"RiskDesigner",
 					"AddBuildPath ok");
+			ProjectUtil.refresh("project",null,projectName);
 		}
 		else{
 			MessageDialog.openInformation(

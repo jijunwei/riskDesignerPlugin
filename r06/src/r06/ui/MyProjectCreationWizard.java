@@ -331,6 +331,14 @@ public class MyProjectCreationWizard extends Wizard
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+	      	try {
+     			
+	      		ProjectUtil.addToBuildpath(filePath, "drools");
+		
+			} catch (ParserConfigurationException | SAXException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			/*IFile f = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(filePath));
 			f.refreshLocal(IResource.DEPTH_ZERO, null);  */	
@@ -591,7 +599,7 @@ public class MyProjectCreationWizard extends Wizard
 				   StringBuffer buf01 = new StringBuffer();
 			       buf01.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			       buf01.append("<kmodule xmlns=\"http://jboss.org/kie/6.0.0/kmodule\">\n");
-				   buf01.append("    <kbase name=\""+projectName+"-"+"plan"+"\" packages=\"rules\">\n");       
+				   buf01.append("    <kbase name=\""+"solution"+"\" packages=\"rules\">\n");       
 				   buf01.append("       <ksession name=\"ksession-"+projectName+"-plan"+"\"/>\n");
 				   buf01.append("    </kbase>\n");
 				   buf01.append("</kmodule>\n");
@@ -702,7 +710,7 @@ public class MyProjectCreationWizard extends Wizard
 					buf1.append("         <goals><goal>add-source</goal></goals>\n");
 					buf1.append("         <configuration>\n");
 					buf1.append("            <sources>\n");
-					buf1.append("               <source>java/src</source>\n");
+					buf1.append("               <source>java/src/com.xujin</source>\n");
 			        buf1.append("            </sources>\n");
 					buf1.append("         </configuration>\n");
 					buf1.append("      </execution>\n");
@@ -741,10 +749,10 @@ public class MyProjectCreationWizard extends Wizard
 					buf1.append("</build>\n");
 					
 					buf1.append("<profiles>\n");
-					buf1.append("<profile>\n<id>test</id>\n<activation>\n<activeByDefault>true</activeByDefault>\n</activation>\n"
+					buf1.append("<profile>\n<id>test</id>\n"
 							+ "<properties>\n<package.environment>test</package.environment>\n</properties>\n</profile>\n");
 					
-					buf1.append("<profile>\n<id>dev</id>\n"
+					buf1.append("<profile>\n<id>dev</id>\n<activation>\n<activeByDefault>true</activeByDefault>\n</activation>\n"
 							+ "<properties>\n<package.environment>dev</package.environment>\n</properties>\n</profile>\n");
 					
 					buf1.append("<profile>\n<id>pre-product</id>\n"

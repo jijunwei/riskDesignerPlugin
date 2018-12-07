@@ -265,7 +265,7 @@ public class DOM4JTest {
         e.printStackTrace();
     }*/
         
-        String filecontent=FileUtils.readFile("src/util/.project");
+        String filecontent=FileUtilsByUs.readFile("src/util/.project");
         //System.out.println(filecontent);
         String json=XmlJSON.xml2JSON(filecontent).replace("@", "");
         System.out.println(json);

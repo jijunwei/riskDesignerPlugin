@@ -37,7 +37,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 import r06.Activator;
-import util.FileUtils;
+import util.FileUtilsByUs;
 import util.ProjectUtil;
 
 /**
@@ -179,11 +179,11 @@ public class AddPlanWizard extends Wizard implements INewWizard {
 				IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot(); 
 				//从工作区根获得项目实例  
 				IProject project = myWorkspaceRoot.getProject(projectName);
-				
+				String projectPath=project.getLocation().toString();
 			    //为正确获取方式
-				String filePath=project.getLocation().toString()+"/resources/default.cfg";
+				String filePath=projectPath+"/resources/default.cfg";
 				
-				String content=FileUtils.readFile(filePath);
+				String content=FileUtilsByUs.readFile(filePath);
 				BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(content.getBytes(Charset.forName("utf8"))), Charset.forName("utf8")));  
 				 String line; 
 				 
@@ -214,7 +214,7 @@ public class AddPlanWizard extends Wizard implements INewWizard {
 					 } 
 					 content=content.replace("</Solution>", buf01.toString());
 					 System.out.println(content);
-					 FileUtils.writeFile(filePath,content);
+					 FileUtilsByUs.writeFile(filePath,content);
 					 //BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
 					 
 					 ProjectUtil.refresh("project",null,projectName);

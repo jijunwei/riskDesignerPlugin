@@ -10,7 +10,7 @@ import java.util.List;
 /**
  *  on 17/12/8.
  */
-public class FileUtils {
+public class FileUtilsByUs {
 
     public static void writeStrToDisk(List<String> strs, String filePath){
         File f = new File(filePath);
